@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📰 Copertina Vintage — Rana Laurea</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--red:#8B2020;--green:#2D5A3D;--paper:#EDE8DC;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--cream);color:var(--brown);font-family:'Courier Prime',monospace;min-height:100vh;}
+  .game-header{background:var(--brown);border-bottom:3px double var(--gold);padding:16px 24px;display:flex;align-items:center;gap:16px;}
+  .back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;}
+  .back-btn:hover{background:var(--gold);color:var(--brown);}
+  .game-header-title{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold);flex:1;text-align:center;}
+  .game-header-num{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,0.5);text-transform:uppercase;}
+  .content{display:flex;justify-content:center;padding:48px 24px;}
+  .magazine{width:100%;max-width:500px;background:var(--paper);border:4px solid var(--brown);box-shadow:10px 10px 0 var(--brown),14px 14px 0 var(--gold);overflow:hidden;}
+  .masthead{background:var(--red);padding:12px 22px;text-align:center;}
+  .masthead h1{font-family:'Playfair Display',serif;font-size:52px;color:white;letter-spacing:10px;text-transform:uppercase;line-height:1;}
+  .masthead span{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:4px;color:rgba(255,255,255,0.65);text-transform:uppercase;display:block;margin-top:4px;}
+  .cover-img{height:320px;background:linear-gradient(135deg,rgba(201,151,58,.15) 0%,rgba(45,90,61,.15) 100%);display:flex;align-items:center;justify-content:center;border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);position:relative;overflow:hidden;}
+  .frog-big{font-size:160px;line-height:1;}
+  .badge{position:absolute;top:18px;right:18px;background:var(--gold);color:var(--brown);font-family:'Playfair Display',serif;font-size:14px;font-style:italic;padding:12px 16px;text-align:center;transform:rotate(8deg);box-shadow:4px 4px 0 var(--brown);line-height:1.4;}
+  .corner-tag{position:absolute;bottom:14px;left:14px;background:var(--red);color:white;font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;padding:4px 12px;text-transform:uppercase;}
+  .cover-body{padding:20px 26px;}
+  .headline{font-family:'Playfair Display',serif;font-size:24px;color:var(--brown);line-height:1.2;margin-bottom:14px;}
+  .headline em{font-style:italic;color:var(--red);}
+  .bullets{list-style:none;border-top:2px solid var(--gold);padding-top:14px;}
+  .bullets li{font-size:12px;color:var(--brown);padding:5px 0;border-bottom:1px dotted rgba(201,151,58,.4);font-family:'Special Elite',cursive;letter-spacing:.5px;}
+  .bullets li::before{content:'◆ ';color:var(--gold);}
+  .cover-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 26px 18px;font-family:'Special Elite',cursive;font-size:11px;color:var(--brown);opacity:.55;border-top:1px solid rgba(201,151,58,.3);}
+</style>
+</head>
+<body>
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div><div class="game-header-num">Gioco III di VII</div><div class="game-header-title">Copertina Vintage</div></div>
+  <div style="width:80px"></div>
+</header>
+<main class="content">
+  <div class="magazine">
+    <div class="masthead">
+      <h1>RANA</h1>
+      <span>La rivista dell'economia emotiva — Anno 2025 — N° 1</span>
+    </div>
+    <div class="cover-img">
+      <span class="frog-big">🐸</span>
+      <div class="badge">ESCLUSIVA<br>"Tipo,<br>capito?"</div>
+      <div class="corner-tag">Numero da collezione</div>
+    </div>
+    <div class="cover-body">
+      <div class="headline">
+        "<em>Sono già indietro</em>": come pianificare 6 mesi di studio per iniziare 48 ore prima dell'esame — e laurearsi comunque
+      </div>
+      <ul class="bullets">
+        <li>IL METODO AIRDROP: 5 ore per copiare una tabella su iPad</li>
+        <li>FONT TRAUMA: Calibri 11pt vs 11.5pt — indagine esclusiva</li>
+        <li>BRUXELLES: un Erasmus, zero lezioni, zero rimpianti</li>
+        <li>INTERVISTA: "Non ne posso più di queste voci strane"</li>
+        <li>SCIENZA: piedi freddi a 40°C — studio clinico con caso studio</li>
+        <li>SPECIALE AMORE: come sbloccarsi grazie alle amiche a Bruxelles</li>
+      </ul>
+    </div>
+    <div class="cover-footer">
+      <span>Modena, 2025</span>
+      <span>€ 3,90</span>
+      <span>Unimore Editore</span>
+    </div>
+  </div>
+</main>
+</body>
+</html>

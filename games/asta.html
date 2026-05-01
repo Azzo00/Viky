@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏦 Asta Alcolica — Rana Laurea</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--red:#8B2020;--green:#2D5A3D;--paper:#EDE8DC;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--cream);color:var(--brown);font-family:'Courier Prime',monospace;min-height:100vh;}
+  .game-header{background:var(--brown);border-bottom:3px double var(--gold);padding:16px 24px;display:flex;align-items:center;gap:16px;}
+  .back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;}
+  .back-btn:hover{background:var(--gold);color:var(--brown);}
+  .game-header-title{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold);flex:1;text-align:center;}
+  .game-header-num{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,0.5);text-transform:uppercase;}
+  .content{max-width:760px;margin:0 auto;padding:40px 24px;}
+  .asta-banner{background:var(--brown);color:var(--gold);font-family:'Playfair Display',serif;font-size:24px;font-style:italic;text-align:center;padding:16px;border:2px solid var(--gold);margin-bottom:28px;}
+  .asta-banner small{display:block;font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:rgba(201,151,58,.55);margin-top:4px;font-style:normal;}
+  .lot-card{background:var(--paper);border:2px solid var(--brown);padding:26px;margin-bottom:18px;position:relative;box-shadow:4px 4px 0 var(--brown);transition:opacity .3s;}
+  .lot-card.sold{opacity:.65;}
+  .lot-num{position:absolute;top:-12px;left:18px;background:var(--gold);color:var(--brown);font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;padding:3px 12px;text-transform:uppercase;}
+  .lot-name{font-family:'Playfair Display',serif;font-size:22px;color:var(--brown);font-style:italic;margin-bottom:6px;}
+  .lot-desc{font-size:12px;color:var(--brown);opacity:.75;line-height:1.6;margin-bottom:18px;}
+  .bid-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .bid-amt{font-family:'Playfair Display',serif;font-size:30px;color:var(--red);font-weight:700;min-width:70px;}
+  .btn{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:9px 22px;border:1.5px solid var(--brown);background:white;color:var(--brown);cursor:pointer;text-transform:uppercase;transition:all .15s;}
+  .btn:hover{background:var(--gold);color:var(--cream);border-color:var(--gold);}
+  .btn-red{background:var(--red);color:white;border-color:var(--red);margin-left:auto;}
+  .btn-red:hover{opacity:.85;background:var(--red);color:white;}
+  .winner-tag{font-family:'Special Elite',cursive;font-size:11px;color:var(--green);letter-spacing:2px;margin-top:8px;text-transform:uppercase;}
+  .sold-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);background:var(--red);color:white;font-family:'Playfair Display',serif;font-size:38px;font-style:italic;padding:10px 32px;border:3px solid white;pointer-events:none;z-index:10;white-space:nowrap;}
+  .reset-btn{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:3px;padding:12px 30px;background:var(--brown);color:var(--cream);border:none;cursor:pointer;text-transform:uppercase;display:block;margin:28px auto 0;transition:all .15s;}
+  .reset-btn:hover{background:var(--gold);color:var(--brown);}
+</style>
+</head>
+<body>
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div><div class="game-header-num">Gioco VI di VII</div><div class="game-header-title">Asta Alcolica</div></div>
+  <div style="width:80px"></div>
+</header>
+<main class="content">
+  <div class="asta-banner">🔨 Casa d'Aste Rozhko 🔨<small>Si offre in bicchieri — aggiudicazione tramite martelletto</small></div>
+  <div id="lotti"></div>
+  <button class="reset-btn" onclick="reset()">↺ &nbsp; Nuova Asta</button>
+</main>
+<script>
+const ITEMS=[
+  {name:'La Voce del Professore',desc:'Il vincitore deve imitare per 30 secondi la voce di un professore di Victoria, incluse pause imbarazzanti e tic verbali. Victoria giudica l\'autenticità e assegna il voto.',start:1},
+  {name:'Il Rituale Airdrop',desc:'Eseguire il procedimento completo: scrivere qualcosa a mano → fare lo screen → sistemare la foto → Airdrop → sistemare ancora → incollare nel file. Tempi cronometrati. Chi supera i 5 minuti beve doppio.',start:2},
+  {name:'Font Investigator',desc:'Victoria mostra un documento sul suo iPad. Il vincitore deve trovare un\'irregolarità di font in meno di 60 secondi. Se non la trova, beve doppio. Se la trova, Victoria beve.',start:1},
+  {name:'Il Piano di Studio',desc:'Presentare un piano di studio dettagliato per un esame immaginario con timeline, divisione degli argomenti e format degli appunti. Victoria valuta: insufficiente = beve il vincitore. Eccellente = beve Victoria.',start:2},
+  {name:'Story Time — Bruxelles',desc:'Victoria racconta un aneddoto di Bruxelles. Il vincitore deve indovinare se è vero o inventato. Sbaglia = beve. Indovina = Victoria beve. Bonus: se l\'aneddoto coinvolge il negozio di vino, beve tutto il tavolo.',start:1},
+  {name:'La Domanda di Diritto',desc:'Il vincitore deve rispondere a una domanda di Diritto Commerciale estratta a caso. Risposta sbagliata = beve. Risposta giusta = Victoria beve in segno di liberazione definitiva dalla materia maledetta.',start:3},
+  {name:'Tipo, Conta le "Tipo"',desc:'Victoria racconta qualcosa per 2 minuti senza limitazioni. Gli altri contano le "tipo". Il vincitore che ha indovinato il numero più vicino non beve — tutti gli altri sì.',start:1},
+];
+let bids=ITEMS.map(i=>({amt:i.start,sold:false,winner:''}));
+function render(){
+  const c=document.getElementById('lotti');
+  c.innerHTML='';
+  ITEMS.forEach((item,i)=>{
+    const s=bids[i].sold;
+    const d=document.createElement('div');
+    d.className='lot-card'+(s?' sold':'');
+    d.innerHTML=`
+      <div class="lot-num">Lotto ${String(i+1).padStart(2,'0')}</div>
+      <div class="lot-name">${item.name}</div>
+      <div class="lot-desc">${item.desc}</div>
+      <div class="bid-row">
+        <div class="bid-amt" id="amt${i}">🥂 ${bids[i].amt}</div>
+        ${!s?`<button class="btn" onclick="raise(${i})">+ Rilancio</button><button class="btn btn-red" onclick="sell(${i})">AGGIUDICATO 🔨</button>`:'<span style="font-family:\'Special Elite\',cursive;font-size:12px;color:var(--red);letter-spacing:2px;">AGGIUDICATO</span>'}
+      </div>
+      ${bids[i].winner?`<div class="winner-tag">Vincitore: ${bids[i].winner}</div>`:''}
+      ${s?'<div class="sold-stamp">VENDUTO</div>':''}
+    `;
+    c.appendChild(d);
+  });
+}
+function raise(i){bids[i].amt++;document.getElementById('amt'+i).textContent='🥂 '+bids[i].amt;}
+function sell(i){
+  const name=prompt(`Lotto "${ITEMS[i].name}" — Chi si è aggiudicato il lotto?`);
+  if(name){bids[i].sold=true;bids[i].winner=name;render();}
+}
+function reset(){if(confirm('Ricominciare l\'asta da capo?')){bids=ITEMS.map(it=>({amt:it.start,sold:false,winner:''}));render();}}
+render();
+</script>
+</body>
+</html>

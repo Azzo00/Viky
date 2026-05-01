@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌍 Marketing Internazionale — Rana Laurea</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--red:#8B2020;--green:#2D5A3D;--paper:#EDE8DC;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--cream);color:var(--brown);font-family:'Courier Prime',monospace;min-height:100vh;display:flex;flex-direction:column;}
+  .game-header{background:var(--brown);border-bottom:3px double var(--gold);padding:16px 24px;display:flex;align-items:center;gap:16px;}
+  .back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;}
+  .back-btn:hover{background:var(--gold);color:var(--brown);}
+  .game-header-title{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold);flex:1;text-align:center;}
+  .game-header-num{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,0.5);text-transform:uppercase;}
+  .game-body{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;}
+  .card{background:var(--paper);border:2px solid var(--brown);padding:36px;max-width:580px;width:100%;box-shadow:6px 6px 0 var(--green);text-align:center;}
+  .score{font-family:'Special Elite',cursive;font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:16px;}
+  .flag{font-size:80px;display:block;margin:8px 0 16px;}
+  .question{font-family:'Playfair Display',serif;font-size:20px;color:var(--brown);font-style:italic;margin-bottom:6px;line-height:1.3;}
+  .product{font-family:'Special Elite',cursive;font-size:13px;color:var(--gold);letter-spacing:2px;margin-bottom:24px;text-transform:uppercase;}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .opt{font-family:'Special Elite',cursive;font-size:13px;padding:14px 10px;border:1.5px solid var(--brown);background:white;color:var(--brown);cursor:pointer;transition:all .15s;letter-spacing:.5px;}
+  .opt:hover:not(:disabled){background:var(--gold);color:var(--cream);border-color:var(--gold);}
+  .opt.correct{background:var(--green);color:white;border-color:var(--green);}
+  .opt.wrong{background:var(--red);color:white;border-color:var(--red);}
+  .opt:disabled{cursor:default;}
+  .feedback{font-family:'Playfair Display',serif;font-size:15px;font-style:italic;color:var(--brown);min-height:40px;margin:10px 0;line-height:1.4;}
+  .next-btn{font-family:'Special Elite',cursive;font-size:13px;letter-spacing:2px;padding:11px 30px;background:var(--brown);color:var(--cream);border:none;cursor:pointer;text-transform:uppercase;transition:all .15s;display:none;}
+  .next-btn.show{display:inline-block;}
+  .next-btn:hover{background:var(--gold);color:var(--brown);}
+  @media(max-width:420px){.options{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div><div class="game-header-num">Gioco IV di VII</div><div class="game-header-title">Marketing Internazionale</div></div>
+  <div style="width:80px"></div>
+</header>
+<main class="game-body">
+  <div class="card">
+    <div class="score">Punteggio: <span id="score">0</span> / <span id="total">0</span></div>
+    <span class="flag" id="flag">🌍</span>
+    <div class="question" id="question">Victoria deve vendere prodotti assurdi nel mondo.<br>Indovina il paese giusto!</div>
+    <div class="product" id="product">— Premi Start per iniziare —</div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn show" id="nextBtn" onclick="next()">Inizia ▶</button>
+  </div>
+</main>
+<script>
+const Q=[
+  {flag:'🧀',product:'Formaggio di Rana ai Piedi Freddi',question:'In quale paese venderebbe meglio questo formaggio artigianale?',opts:['Finlandia','Francia','Brasile','Giappone'],ok:1,fb:'Ovviamente in Francia. Qualsiasi cosa sia formaggio, i francesi la comprano.'},
+  {flag:'📱',product:'App per Convertire Foto in PDF via Airdrop',question:'Dove c\'è il mercato più grande per questa app rivoluzionaria?',opts:['Silicon Valley','Modena','Bruxelles','Tokyo'],ok:1,fb:'A Modena. L\'utente tipo è già noto alle autorità locali.'},
+  {flag:'🧦',product:'Calze Riscaldate Extreme — 60° garantiti',question:'Target principale per le calze riscaldanti anti-Rana?',opts:['Sahara','Arabia Saudita','Dubai','Italia (Modena)'],ok:3,fb:'Progettate specificamente per chi ha i piedi freddi anche ad agosto.'},
+  {flag:'🍷',product:'Vino "Non Facciamo Nulla" — Bruxelles Export',question:'Mercato ideale per il vino del negozio di Bruxelles?',opts:['Germania','Belgio','Irlanda','Portogallo'],ok:1,fb:'In Belgio. Victoria è testimonial non ufficiale.'},
+  {flag:'📐',product:'Font Checker Pro — rileva variazioni di 0.01pt',question:'Chi è il cliente ideale per il rilevatore di font microscopici?',opts:['Graphic designer','Victoria Rozhko','NASA','Tutti gli studenti Unimore'],ok:1,fb:'Non serve spiegare perché.'},
+  {flag:'🗓️',product:'Planner "Sono già indietro" — Edizione Deluxe',question:'In quale fiera internazionale andrebbe meglio?',opts:['Frankfurt Book Fair','Salone del Mobile','Maison & Objet','Erasmus Students Fair'],ok:3,fb:'Gli studenti Erasmus capiscono l\'arte di pianificare senza mai fare nulla.'},
+  {flag:'🛋️',product:'Cuscino Termico Anti-Piedi-Freddi da Letto',question:'Dove si venderebbe di più questo cuscino riscaldante?',opts:['Norvegia','Equatore','Italia','Finlandia'],ok:2,fb:'Italia. Specificamente Modena. Specificamente via Rana.'},
+];
+let idx=0,sc=0;
+function next(){
+  if(idx>=Q.length){end();return;}
+  const q=Q[idx];
+  document.getElementById('flag').textContent=q.flag;
+  document.getElementById('question').textContent=q.question;
+  document.getElementById('product').textContent=q.product;
+  document.getElementById('feedback').textContent='';
+  document.getElementById('nextBtn').classList.remove('show');
+  document.getElementById('total').textContent=Q.length;
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';b.textContent=o;
+    b.onclick=()=>answer(i,q.ok,q.fb);
+    opts.appendChild(b);
+  });
+}
+function answer(chosen,ok,fb){
+  document.querySelectorAll('.opt').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===ok)b.classList.add('correct');
+    else if(i===chosen)b.classList.add('wrong');
+  });
+  if(chosen===ok){sc++;document.getElementById('score').textContent=sc;}
+  document.getElementById('feedback').textContent=(chosen===ok?'✓ ':'✗ ')+fb;
+  idx++;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent=idx>=Q.length?'Risultati ▶':'Prossima ▶';
+  nb.classList.add('show');
+}
+function end(){
+  document.getElementById('flag').textContent='🏆';
+  document.getElementById('question').textContent=`Hai totalizzato ${sc}/${Q.length}`;
+  const m=['Pessimo. Torna a Bruxelles.','Non male! Hai un futuro nel marketing assurdo.','Ottimo! Assumi Victoria.','Perfetto! Brindisi per tutti!'];
+  document.getElementById('product').textContent=m[Math.min(Math.floor(sc/(Q.length/m.length)),m.length-1)];
+  document.getElementById('feedback').textContent='';
+  document.getElementById('options').innerHTML='';
+  const nb=document.getElementById('nextBtn');
+  nb.textContent='↺ Rigioca';nb.classList.add('show');
+  nb.onclick=()=>{idx=0;sc=0;document.getElementById('score').textContent=0;nb.onclick=next;next();};
+}
+</script>
+</body>
+</html>

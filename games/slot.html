@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎰 Slot Machine — Rana Laurea</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--green:#2D5A3D;--paper:#EDE8DC; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--cream);color:var(--brown);font-family:'Courier Prime',monospace;min-height:100vh;display:flex;flex-direction:column;}
+  .game-header{background:var(--brown);border-bottom:3px double var(--gold);padding:16px 24px;display:flex;align-items:center;gap:16px;}
+  .back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;}
+  .back-btn:hover{background:var(--gold);color:var(--brown);}
+  .game-header-title{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold);flex:1;text-align:center;}
+  .game-header-num{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,0.5);text-transform:uppercase;}
+  .game-body{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;}
+  .game-card{background:var(--paper);border:3px solid var(--brown);padding:40px;max-width:600px;width:100%;box-shadow:8px 8px 0 var(--gold);text-align:center;}
+  .game-card::before{content:'★  GRAND CASINO UNIMORE  ★';display:block;font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:24px;}
+  .slot-reels{display:flex;justify-content:center;gap:14px;margin:24px 0;}
+  .reel{width:100px;height:100px;border:2px solid var(--brown);background:white;display:flex;align-items:center;justify-content:center;font-size:46px;overflow:hidden;box-shadow:inset 0 0 12px rgba(0,0,0,0.1);}
+  .slot-btn{font-family:'Special Elite',cursive;font-size:16px;letter-spacing:3px;padding:16px 48px;background:var(--red);color:white;border:none;cursor:pointer;text-transform:uppercase;margin:18px 0 8px;box-shadow:5px 5px 0 var(--brown);transition:all .15s;}
+  .slot-btn:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 var(--brown);}
+  .slot-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+  .slot-result{font-family:'Playfair Display',serif;font-size:20px;color:var(--red);margin-top:18px;min-height:56px;font-style:italic;line-height:1.4;}
+  .slot-jackpot{color:var(--gold);font-weight:700;font-size:24px;animation:pulse .5s ease-in-out infinite alternate;}
+  .slot-counter{font-family:'Special Elite',cursive;font-size:11px;color:var(--gold);letter-spacing:2px;margin-top:16px;opacity:.7;}
+  @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.06)}}
+  @media(max-width:480px){.reel{width:76px;height:76px;font-size:34px;}.slot-btn{padding:12px 32px;font-size:13px;}}
+</style>
+</head>
+<body>
+
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div>
+    <div class="game-header-num">Gioco I di VII</div>
+    <div class="game-header-title">Slot Machine della Laurea</div>
+  </div>
+  <div style="width:80px"></div>
+</header>
+
+<main class="game-body">
+  <div class="game-card">
+    <div class="slot-reels">
+      <div class="reel"><span id="r1">🎓</span></div>
+      <div class="reel"><span id="r2">🐸</span></div>
+      <div class="reel"><span id="r3">📚</span></div>
+    </div>
+    <button class="slot-btn" id="slotBtn" onclick="spinSlot()">— GIRA —</button>
+    <div class="slot-result" id="slotResult"></div>
+    <div class="slot-counter">Tentativi: <span id="tries">0</span></div>
+  </div>
+</main>
+
+<script>
+const syms=['🎓','🐸','📚','💼','🍷','📊','🎲','🧾','💶','🔮','🏦','🍺'];
+let spinning=false, tries=0;
+function spinSlot(){
+  if(spinning)return;
+  spinning=true;
+  tries++;
+  document.getElementById('tries').textContent=tries;
+  document.getElementById('slotBtn').disabled=true;
+  document.getElementById('slotResult').textContent='';
+  document.getElementById('slotResult').className='slot-result';
+  const jackpot=Math.random()<0.033;
+  const t=[0,1,2].map(()=>Math.floor(Math.random()*syms.length));
+  if(jackpot){t[0]=t[1]=t[2]=0;}
+  ['r1','r2','r3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    const total=20+i*8; let c=0;
+    const iv=setInterval(()=>{
+      el.textContent=syms[Math.floor(Math.random()*syms.length)];
+      if(++c>=total){clearInterval(iv);el.textContent=syms[t[i]];if(i===2)finish(t,jackpot);}
+    },80+i*30);
+  });
+}
+function finish(t,jackpot){
+  const res=document.getElementById('slotResult');
+  if(jackpot) res.innerHTML='<span class="slot-jackpot">🎉 110 E LODE! Champagne per tutti! 🎉</span>';
+  else if(t[0]===t[1]&&t[1]===t[2]) res.innerHTML='<span class="slot-jackpot">Jackpot! Tre uguali — offri un giro!</span>';
+  else if(t[0]===t[1]||t[1]===t[2]||t[0]===t[2]) res.textContent='Due uguali — mezzo bicchiere!';
+  else res.textContent=['Niente. Bevi e riprova.','Tipo… niente. Bevi.','Ritenta. Un sorso.','Macché. Vino.','L\'Oracolo dice: riprova.'][Math.floor(Math.random()*5)];
+  spinning=false;
+  document.getElementById('slotBtn').disabled=false;
+}
+</script>
+</body>
+</html>

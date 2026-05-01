@@ -1,608 +1,813 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Time Tracker</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐸 Laurea di Rana — Victoria Rozhko</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --dark: #1A1410;
+    --brown: #3D2B1F;
+    --gold: #C9973A;
+    --gold-light: #E8C97A;
+    --red: #8B2020;
+    --green: #2D5A3D;
+    --paper: #EDE8DC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    :root {
-      --bg: #0f1117;
-      --bg2: #1a1d27;
-      --bg3: #22263a;
-      --border: rgba(255,255,255,0.08);
-      --border2: rgba(255,255,255,0.15);
-      --text: #f0f2f8;
-      --text2: #8b90a8;
-      --text3: #555a72;
-      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-      --radius: 10px;
-      --radius-lg: 14px;
-    }
+  body {
+    background-color: var(--cream);
+    color: var(--dark);
+    font-family: 'Courier Prime', monospace;
+    overflow-x: hidden;
+  }
 
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
+  /* ── TICKER ── */
+  .ticker-wrap {
+    background: var(--brown);
+    color: var(--gold);
+    padding: 9px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    border-bottom: 2px solid var(--gold);
+  }
+  .ticker-track {
+    display: inline-block;
+    animation: ticker 90s linear infinite;
+  }
+  @keyframes ticker {
+    0%   { transform: translateX(100vw); }
+    100% { transform: translateX(-100%); }
+  }
 
-    .app {
-      max-width: 780px;
-      margin: 0 auto;
-    }
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 64px 20px 48px;
+    border-bottom: 3px double var(--gold);
+    position: relative;
+  }
+  .hero-ornament {
+    font-size: 12px;
+    letter-spacing: 6px;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-family: 'Special Elite', cursive;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 8vw, 88px);
+    font-weight: 700;
+    line-height: 0.95;
+    color: var(--brown);
+    margin-bottom: 6px;
+  }
+  .hero h1 em { font-style: italic; color: var(--green); }
+  .hero-sub {
+    font-family: 'Special Elite', cursive;
+    font-size: clamp(13px, 2.5vw, 20px);
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin: 14px 0 10px;
+    text-transform: uppercase;
+  }
+  .hero-frog { font-size: 16px; color: var(--green); opacity: 0.5; letter-spacing: 2px; margin: 8px 0; }
+  .hero-desc {
+    font-size: 14px;
+    color: var(--brown);
+    opacity: 0.75;
+    max-width: 520px;
+    margin: 16px auto 0;
+    line-height: 1.65;
+  }
 
-    /* HEADER */
-    .topbar {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 1.75rem;
-    }
-    .topbar-title {
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-      color: var(--text);
-    }
-    .topbar-title span {
-      color: #5dcaa5;
-    }
-    .topbar-date {
-      font-size: 13px;
-      color: var(--text3);
-    }
+  /* ── SECTION UTILITY ── */
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 64px 24px;
+  }
+  .section-header { text-align: center; margin-bottom: 48px; }
+  .section-tag {
+    display: inline-block;
+    font-family: 'Special Elite', cursive;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 3px 14px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 46px);
+    color: var(--brown);
+    line-height: 1.1;
+  }
+  .section-title em { font-style: italic; color: var(--green); }
+  .section-desc { font-size: 13px; color: var(--brown); opacity: 0.65; margin-top: 10px; line-height: 1.6; }
 
-    /* STATS */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 1.5rem;
-    }
-    .stat {
-      background: var(--bg2);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-    }
-    .stat-label {
-      font-size: 11px;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-    }
-    .stat-val {
-      font-size: 24px;
-      font-weight: 600;
-      font-family: var(--mono);
-      color: var(--text);
-    }
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 0; bottom: 0;
+    width: 2px;
+    background: repeating-linear-gradient(to bottom, var(--gold) 0px, var(--gold) 8px, transparent 8px, transparent 16px);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 36px;
+    padding-left: 20px;
+  }
+  .tl-item::before {
+    content: '◆';
+    position: absolute;
+    left: -26px;
+    top: 2px;
+    color: var(--gold);
+    font-size: 12px;
+  }
+  .tl-year {
+    font-family: 'Special Elite', cursive;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .tl-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--brown);
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .tl-body {
+    font-size: 13px;
+    color: var(--brown);
+    opacity: 0.8;
+    line-height: 1.65;
+  }
+  .tl-tag {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--brown);
+    font-family: 'Special Elite', cursive;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 2px 10px;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
 
-    /* ADD FORM */
-    .add-card {
-      background: var(--bg2);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.1rem 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-    .add-card-head {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      user-select: none;
-      margin-bottom: 14px;
-    }
-    .add-card-head-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text2);
-    }
-    .chevron {
-      font-size: 10px;
-      color: var(--text3);
-      transition: transform .2s;
-      display: inline-block;
-    }
-    .chevron.open { transform: rotate(90deg); }
+  /* ── FOTO GALLERY ── */
+  .gallery-divider {
+    border-top: 3px double rgba(201,151,58,0.3);
+    padding-top: 64px;
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .photo-card {
+    background: var(--paper);
+    border: 2px solid var(--brown);
+    padding: 14px 14px 20px;
+    box-shadow: 5px 5px 0 var(--gold);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .photo-card:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--gold); }
+  .photo-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: repeating-linear-gradient(45deg, rgba(201,151,58,0.07) 0px, rgba(201,151,58,0.07) 10px, transparent 10px, transparent 20px);
+    border: 1.5px dashed rgba(201,151,58,0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .photo-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+    display: none;
+  }
+  .photo-placeholder .upload-hint {
+    font-family: 'Special Elite', cursive;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-align: center;
+    text-transform: uppercase;
+    z-index: 1;
+  }
+  .photo-placeholder .upload-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.5; }
+  .photo-caption {
+    margin-top: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--brown);
+    text-align: center;
+  }
+  .photo-subcaption {
+    font-size: 11px;
+    color: var(--brown);
+    opacity: 0.6;
+    text-align: center;
+    margin-top: 4px;
+    font-family: 'Special Elite', cursive;
+    letter-spacing: 1px;
+  }
+  input[type="file"] { display: none; }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 110px;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .form-row2 {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: end;
-    }
-    .field label {
-      display: block;
-      font-size: 12px;
-      color: var(--text3);
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .field input {
-      width: 100%;
-      height: 38px;
-      padding: 0 12px;
-      background: var(--bg3);
-      border: 0.5px solid var(--border2);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-size: 14px;
-      font-family: var(--font);
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .field input:focus {
-      border-color: #5dcaa5;
-      box-shadow: 0 0 0 2px rgba(93,202,165,.15);
-    }
-    .field input::placeholder { color: var(--text3); }
+  /* ── MESSAGGI AMICI ── */
+  .messages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .message-card {
+    background: var(--paper);
+    border: 2px solid var(--brown);
+    padding: 22px;
+    box-shadow: 4px 4px 0 var(--brown);
+    position: relative;
+  }
+  .message-card::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    color: var(--gold);
+    opacity: 0.25;
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    line-height: 1;
+  }
+  .message-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--brown);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .message-author {
+    font-family: 'Special Elite', cursive;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    border-top: 1px dotted rgba(201,151,58,0.4);
+    padding-top: 10px;
+  }
+  .add-message-btn {
+    font-family: 'Special Elite', cursive;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 10px 24px;
+    border: 1.5px dashed var(--gold);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    text-transform: uppercase;
+    display: block;
+    margin: 24px auto 0;
+    transition: all 0.2s;
+  }
+  .add-message-btn:hover { background: var(--gold); color: var(--brown); border-style: solid; }
 
-    .btn-submit {
-      height: 38px;
-      padding: 0 22px;
-      background: #0f6e56;
-      color: #9fe1cb;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 14px;
-      font-weight: 500;
-      font-family: var(--font);
-      cursor: pointer;
-      transition: background .15s, transform .1s;
-      white-space: nowrap;
-    }
-    .btn-submit:hover { background: #1d9e75; }
-    .btn-submit:active { transform: scale(.98); }
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,20,16,0.8);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--paper);
+    border: 3px solid var(--gold);
+    padding: 32px;
+    max-width: 440px;
+    width: 90%;
+    box-shadow: 8px 8px 0 var(--brown);
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--brown);
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+  .modal-box input, .modal-box textarea {
+    width: 100%;
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--gold);
+    background: white;
+    color: var(--brown);
+    margin-bottom: 12px;
+    resize: vertical;
+  }
+  .modal-box textarea { min-height: 100px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+  .modal-save {
+    font-family: 'Special Elite', cursive;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 9px 22px;
+    background: var(--brown);
+    color: var(--cream);
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .modal-cancel {
+    font-family: 'Special Elite', cursive;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 9px 22px;
+    background: transparent;
+    color: var(--brown);
+    border: 1.5px solid var(--brown);
+    cursor: pointer;
+    text-transform: uppercase;
+  }
 
-    /* TASK CARDS */
-    .tasks { display: flex; flex-direction: column; gap: 12px; }
+  /* ── GAMES SECTION ── */
+  .games-section {
+    background: var(--brown);
+    padding: 72px 24px;
+    border-top: 3px double var(--gold);
+  }
+  .games-inner { max-width: 900px; margin: 0 auto; }
+  .games-header { text-align: center; margin-bottom: 48px; }
+  .games-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    color: var(--gold);
+    font-style: italic;
+  }
+  .games-header p {
+    font-family: 'Special Elite', cursive;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(201,151,58,0.6);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .game-btn {
+    display: block;
+    text-decoration: none;
+    background: transparent;
+    border: 2px solid rgba(201,151,58,0.4);
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .game-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: translateY(100%);
+    transition: transform 0.25s cubic-bezier(.16,1,.3,1);
+  }
+  .game-btn:hover::before { transform: translateY(0); }
+  .game-btn:hover .game-btn-icon,
+  .game-btn:hover .game-btn-title,
+  .game-btn:hover .game-btn-desc { color: var(--brown); }
+  .game-btn-icon {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s;
+  }
+  .game-btn-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--gold-light);
+    font-style: italic;
+    display: block;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s;
+  }
+  .game-btn-desc {
+    font-family: 'Special Elite', cursive;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: rgba(201,151,58,0.5);
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s;
+  }
 
-    .empty {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text3);
-      font-size: 14px;
-      border: 0.5px dashed var(--border2);
-      border-radius: var(--radius-lg);
-    }
+  /* ── FOOTER ── */
+  .site-footer {
+    text-align: center;
+    padding: 48px 20px;
+    background: var(--dark);
+    border-top: 3px double var(--gold);
+  }
+  .footer-msg {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .footer-sub {
+    font-family: 'Special Elite', cursive;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: rgba(201,151,58,0.5);
+    text-transform: uppercase;
+  }
+  .footer-frog { font-size: 36px; margin: 16px 0; }
 
-    .card {
-      background: var(--bg2);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      transition: border-color .2s;
-    }
-    .card.running { border-color: var(--accent); }
-    .card-accent { height: 3px; transition: background .3s; }
-    .card-body { padding: 1rem 1.25rem; }
+  /* ── CONFETTI ── */
+  .confetti-btn {
+    font-family: 'Special Elite', cursive;
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 12px 28px;
+    background: var(--gold);
+    color: var(--brown);
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 700;
+    box-shadow: 4px 4px 0 rgba(201,151,58,0.3);
+    margin-top: 16px;
+    transition: all 0.15s;
+  }
+  .confetti-btn:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 rgba(201,151,58,0.3); }
+  .confetti-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+  }
 
-    .card-top {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .card-titles { flex: 1; min-width: 0; }
-    .card-name {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .badge-commessa {
-      display: inline-block;
-      padding: 2px 9px;
-      border-radius: 100px;
-      font-size: 11px;
-      font-weight: 500;
-      margin-top: 5px;
-      letter-spacing: 0.03em;
-    }
-    .no-commessa {
-      font-size: 12px;
-      color: var(--text3);
-      margin-top: 4px;
-    }
-
-    .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-    .btn-play {
-      height: 34px;
-      padding: 0 16px;
-      border-radius: var(--radius);
-      font-size: 13px;
-      font-weight: 500;
-      font-family: var(--font);
-      cursor: pointer;
-      transition: all .15s;
-      white-space: nowrap;
-    }
-    .btn-del {
-      height: 34px;
-      width: 34px;
-      background: transparent;
-      border: 0.5px solid var(--border2);
-      border-radius: var(--radius);
-      color: var(--text3);
-      cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .15s;
-    }
-    .btn-del:hover { border-color: #e24b4a; color: #e24b4a; background: rgba(226,75,74,.1); }
-
-    /* TIMER ROW */
-    .timer-row { display: flex; align-items: center; gap: 14px; }
-    .timer-num {
-      font-size: 30px;
-      font-weight: 600;
-      font-family: var(--mono);
-      color: var(--text);
-      min-width: 96px;
-      letter-spacing: -1px;
-      transition: color .3s;
-    }
-    .progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-    .progress-bg {
-      height: 5px;
-      background: var(--bg3);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 1s linear, background .3s;
-    }
-    .progress-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--text3);
-      font-family: var(--mono);
-    }
-
-    /* SESSIONS */
-    .sessions-wrap {
-      border-top: 0.5px solid var(--border);
-      padding: 8px 1.25rem;
-      background: var(--bg);
-    }
-    .sessions-label {
-      font-size: 11px;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 5px;
-    }
-    .session-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--text2);
-      padding: 2px 0;
-      font-family: var(--mono);
-    }
-
-    /* EXPORT */
-    .export-bar {
-      margin-top: 1.5rem;
-      display: flex;
-      justify-content: flex-end;
-    }
-    .btn-export {
-      height: 36px;
-      padding: 0 18px;
-      background: transparent;
-      border: 0.5px solid var(--border2);
-      border-radius: var(--radius);
-      color: var(--text2);
-      font-size: 13px;
-      font-family: var(--font);
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .btn-export:hover { border-color: #5dcaa5; color: #5dcaa5; }
-  </style>
+  @media (max-width: 600px) {
+    .games-grid { grid-template-columns: 1fr 1fr; }
+    .photo-grid  { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
-<div class="app">
 
-  <div class="topbar">
-    <div class="topbar-title">Time <span>Tracker</span></div>
-    <div class="topbar-date" id="today-date"></div>
-  </div>
-
-  <div class="stats-row">
-    <div class="stat">
-      <div class="stat-label">Attività</div>
-      <div class="stat-val" id="stat-active">0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Ore totali</div>
-      <div class="stat-val" id="stat-hours">00:00</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">In esecuzione</div>
-      <div class="stat-val" id="stat-running" style="font-size:14px;padding-top:6px;color:#8b90a8">—</div>
-    </div>
-  </div>
-
-  <div class="add-card">
-    <div class="add-card-head" onclick="toggleForm()">
-      <span class="chevron open" id="chevron">&#9654;</span>
-      <span class="add-card-head-label">Nuova attività</span>
-    </div>
-    <div id="form-body">
-      <div class="form-grid">
-        <div class="field">
-          <label>Descrizione</label>
-          <input id="inp-name" type="text" placeholder="Es. Sviluppo componente login" />
-        </div>
-        <div class="field">
-          <label>Commessa</label>
-          <input id="inp-commessa" type="text" placeholder="Es. COMM-2024-07" />
-        </div>
-        <div class="field">
-          <label>Ore obiettivo</label>
-          <input id="inp-hours" type="number" placeholder="8" min="0.25" step="0.25" />
-        </div>
-      </div>
-      <div class="form-row2">
-        <div style="font-size:12px;color:var(--text3);align-self:center">
-          Ogni commessa riceve un colore automatico — attività sulla stessa commessa condividono il colore.
-        </div>
-        <button class="btn-submit" onclick="addTask()">+ Aggiungi</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="tasks" id="tasks-list">
-    <div class="empty">Nessuna attività ancora — aggiungine una sopra per iniziare</div>
-  </div>
-
-  <div class="export-bar">
-    <button class="btn-export" onclick="exportCSV()">&#8659; Esporta CSV</button>
-  </div>
-
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <span class="ticker-track">
+    🐸 BREAKING: Victoria "Rana" Rozhko ha finalmente finito di scrivere gli appunti &nbsp;&nbsp;◆&nbsp;&nbsp;
+    MERCATI: Le voci strane dei professori quotate a -98% nel suo portafoglio emotivo &nbsp;&nbsp;◆&nbsp;&nbsp;
+    ANALISI: 2 settimane di appunti + 3 giorni di studio = laurea in Economia &nbsp;&nbsp;◆&nbsp;&nbsp;
+    UNIMORE — Facoltà di Economia e Marketing Internazionale — Modena &nbsp;&nbsp;◆&nbsp;&nbsp;
+    AIRDROP ALERT: 47 screenshot di tabelle in transito via Airdrop &nbsp;&nbsp;◆&nbsp;&nbsp;
+    FONT EMERGENCY: rilevata variazione di 0.5pt nel Calibri — unità di crisi attivata &nbsp;&nbsp;◆&nbsp;&nbsp;
+    ERASMUS REPORT: Bruxelles 2023 — ratio studio/sfacimento: 3% / 97% &nbsp;&nbsp;◆&nbsp;&nbsp;
+    METEO MODENA: 38°C — i piedi della Rana rimangono a 4°C &nbsp;&nbsp;◆&nbsp;&nbsp;
+    🐸 BREAKING: Victoria "Rana" Rozhko ha finalmente finito di scrivere gli appunti &nbsp;&nbsp;◆&nbsp;&nbsp;
+  </span>
 </div>
 
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-ornament">✦ &nbsp; Laurea Triennale — Unimore — 2025 &nbsp; ✦</div>
+  <h1>Victoria<br><em>"Rana"</em><br>Rozhko</h1>
+  <div class="hero-sub">Economia &amp; Marketing Internazionale</div>
+  <div class="hero-frog">~ ~ ~ 🐸 piedi freddi, laurea calda 🐸 ~ ~ ~</div>
+  <p class="hero-desc">Dopo 3–4 anni di appunti perfetti, lezioni in loop, font corretti, un Erasmus che era più sfacimento che studio, e infinite ore su Airdrop… benvenuti alla festa di laurea di Rana!</p>
+</header>
+
+<!-- ═══════════════════════════════ -->
+<!-- TIMELINE                        -->
+<!-- ═══════════════════════════════ -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag">Cronologia Ufficiale</div>
+    <h2 class="section-title">La <em>Carriera</em> di Rana</h2>
+    <p class="section-desc">Documentazione storica verificata — fonte: testimoni oculari</p>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">Anno I — L'Inizio</div>
+      <div class="tl-title">L'iscrizione e il grande piano</div>
+      <div class="tl-body">Victoria si iscrive a Economia e Marketing Internazionale con un piano dettagliato: studiare con anticipo, prendere appunti puliti, essere sempre in pari. Il piano viene abbandonato entro la prima settimana.</div>
+      <span class="tl-tag">Ottimismo ingenuo</span>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">Anno I — Prima Sessione</div>
+      <div class="tl-title">Nasce il Metodo Airdrop</div>
+      <div class="tl-body">Scrivere a mano → fare lo screen → sistemare la foto → Airdrop → sistemare ancora → incollare sul file. Un processo che richiede 5 ore per inserire una tabella. Il font deve essere quello giusto, sempre.</div>
+      <span class="tl-tag">Innovazione metodologica</span>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">Anno II — Il Trauma</div>
+      <div class="tl-title">Diritto Commerciale</div>
+      <div class="tl-body">La materia più odiata della storia personale di Victoria. 600 pagine di appunti perfettamente formattati, studiati in 48 ore. Le voci dei professori ormai impresse nella memoria a vita. "Non ne posso più di queste voci strane."</div>
+      <span class="tl-tag">Trauma formativo</span>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">Anno III — L'Erasmus</div>
+      <div class="tl-title">Bruxelles: la vacanza di studio</div>
+      <div class="tl-body">6 mesi a Bruxelles. Obiettivo dichiarato: studiare, migliorare il francese, crescere. Obiettivo raggiunto: vivere in 20 in una casa losca, lavorare in un negozio di vino dove non facevano nulla, bere fuori ogni sera, partecipare al Pride ("il giorno migliore della mia vita"), e incontrare le amiche Carlotta e Annalisa di Trieste — e il sottoscritto.</div>
+      <span class="tl-tag">Periodo d'oro</span>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">Anno III — Il Ritorno</div>
+      <div class="tl-title">Post-Erasmus: il crollo motivazionale</div>
+      <div class="tl-body">Tornata a Modena, la voglia di studiare è rimasta a Bruxelles. L'organizzazione maniacale rimane intatta: piani dettagliati mesi prima, con la certezza di essere già indietro il giorno stesso in cui si inizia.</div>
+      <span class="tl-tag">Resilienza</span>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2025 — Il Traguardo</div>
+      <div class="tl-title">Dottoressa Rozhko</div>
+      <div class="tl-body">Con appunti perfetti, font corretti al millesimo, e una determinazione che definire "unica nel suo genere" è un eufemismo, Victoria taglia il traguardo. Ce l'ha fatta. Tipo.</div>
+      <span class="tl-tag">🎓 Laurea</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ -->
+<!-- GALLERY FOTO                    -->
+<!-- ═══════════════════════════════ -->
+<div style="border-top: 3px double rgba(201,151,58,0.25);">
+<section class="section gallery-divider">
+  <div class="section-header">
+    <div class="section-tag">Archivio Fotografico</div>
+    <h2 class="section-title">Le <em>Foto</em> di Rana</h2>
+    <p class="section-desc">Clicca su ogni riquadro per caricare una foto dal tuo telefono o computer</p>
+  </div>
+
+  <div class="photo-grid" id="photoGrid">
+
+    <div class="photo-card">
+      <div class="photo-placeholder" onclick="triggerUpload(0)">
+        <img id="img-0" src="" alt="">
+        <div class="upload-icon">📷</div>
+        <div class="upload-hint">Carica foto</div>
+      </div>
+      <div class="photo-caption">Il giorno della laurea</div>
+      <div class="photo-subcaption">Modena, 2025</div>
+      <input type="file" id="file-0" accept="image/*" onchange="loadPhoto(0, this)">
+    </div>
+
+    <div class="photo-card">
+      <div class="photo-placeholder" onclick="triggerUpload(1)">
+        <img id="img-1" src="" alt="">
+        <div class="upload-icon">📷</div>
+        <div class="upload-hint">Carica foto</div>
+      </div>
+      <div class="photo-caption">Erasmus — Bruxelles</div>
+      <div class="photo-subcaption">La casa losca, 2023</div>
+      <input type="file" id="file-1" accept="image/*" onchange="loadPhoto(1, this)">
+    </div>
+
+    <div class="photo-card">
+      <div class="photo-placeholder" onclick="triggerUpload(2)">
+        <img id="img-2" src="" alt="">
+        <div class="upload-icon">📷</div>
+        <div class="upload-hint">Carica foto</div>
+      </div>
+      <div class="photo-caption">Il Metodo Airdrop in azione</div>
+      <div class="photo-subcaption">iPad, stilo, e pazienza infinita</div>
+      <input type="file" id="file-2" accept="image/*" onchange="loadPhoto(2, this)">
+    </div>
+
+    <div class="photo-card">
+      <div class="photo-placeholder" onclick="triggerUpload(3)">
+        <img id="img-3" src="" alt="">
+        <div class="upload-icon">📷</div>
+        <div class="upload-hint">Carica foto</div>
+      </div>
+      <div class="photo-caption">Bruxelles Pride</div>
+      <div class="photo-subcaption">"Il giorno migliore della mia vita"</div>
+      <input type="file" id="file-3" accept="image/*" onchange="loadPhoto(3, this)">
+    </div>
+
+    <div class="photo-card">
+      <div class="photo-placeholder" onclick="triggerUpload(4)">
+        <img id="img-4" src="" alt="">
+        <div class="upload-icon">📷</div>
+        <div class="upload-hint">Carica foto</div>
+      </div>
+      <div class="photo-caption">Con Carlotta e Annalisa</div>
+      <div class="photo-subcaption">Trieste / Bruxelles</div>
+      <input type="file" id="file-4" accept="image/*" onchange="loadPhoto(4, this)">
+    </div>
+
+    <div class="photo-card">
+      <div class="photo-placeholder" onclick="triggerUpload(5)">
+        <img id="img-5" src="" alt="">
+        <div class="upload-icon">📷</div>
+        <div class="upload-hint">Carica foto</div>
+      </div>
+      <div class="photo-caption">Noi due</div>
+      <div class="photo-subcaption">Dopo Bruxelles, insieme</div>
+      <input type="file" id="file-5" accept="image/*" onchange="loadPhoto(5, this)">
+    </div>
+
+  </div>
+</section>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!-- MESSAGGI AMICI                  -->
+<!-- ═══════════════════════════════ -->
+<div style="border-top: 3px double rgba(201,151,58,0.25); background: rgba(237,232,220,0.4);">
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag">Posta della Redazione</div>
+    <h2 class="section-title">Messaggi <em>degli Amici</em></h2>
+    <p class="section-desc">Lascia un messaggio per la Dottoressa Rozhko — letti ad alta voce durante la festa</p>
+  </div>
+
+  <div class="messages-grid" id="messagesGrid">
+    <div class="message-card">
+      <div class="message-text">Il tuo metodo Airdrop è un'opera d'arte incompresa. Darwin avrebbe scritto un capitolo su di te.</div>
+      <div class="message-author">— Il tuo ragazzo (patatona)</div>
+    </div>
+    <div class="message-card">
+      <div class="message-text">Bruxelles non è stata la stessa cosa senza di te. O forse è stata uguale. In ogni caso, congratulazioni Rana!</div>
+      <div class="message-author">— Carlotta &amp; Annalisa, Trieste</div>
+    </div>
+    <div class="message-card">
+      <div class="message-text">Non ho mai visto nessuno studiare con così tanta cura… e così poco anticipo. Sei un'ispirazione.</div>
+      <div class="message-author">— Testimone oculare, Unimore</div>
+    </div>
+  </div>
+
+  <button class="add-message-btn" onclick="openModal()">+ Aggiungi il tuo messaggio</button>
+</section>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-title">Lascia un messaggio</div>
+    <input type="text" id="modalAuthor" placeholder="Il tuo nome (es. Carlotta)">
+    <textarea id="modalText" placeholder="Scrivi il tuo messaggio per Victoria..."></textarea>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Annulla</button>
+      <button class="modal-save" onclick="saveMessage()">Salva ◆</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!-- GAMES SECTION                   -->
+<!-- ═══════════════════════════════ -->
+<div class="games-section">
+  <div class="games-inner">
+    <div class="games-header">
+      <h2>I Giochi della Festa</h2>
+      <p>◆ &nbsp; Seleziona un gioco per iniziare &nbsp; ◆</p>
+    </div>
+    <div class="games-grid">
+      <a class="game-btn" href="games/slot.html">
+        <span class="game-btn-icon">🎰</span>
+        <span class="game-btn-title">Slot Machine</span>
+        <span class="game-btn-desc">Gira i rulli della laurea</span>
+      </a>
+      <a class="game-btn" href="games/grafici.html">
+        <span class="game-btn-icon">📊</span>
+        <span class="game-btn-title">Grafici Assurdi</span>
+        <span class="game-btn-desc">Dati ufficiali su Victoria</span>
+      </a>
+      <a class="game-btn" href="games/copertina.html">
+        <span class="game-btn-icon">📰</span>
+        <span class="game-btn-title">Copertina Vintage</span>
+        <span class="game-btn-desc">La rivista di Rana</span>
+      </a>
+      <a class="game-btn" href="games/paese.html">
+        <span class="game-btn-icon">🌍</span>
+        <span class="game-btn-title">Marketing Internazionale</span>
+        <span class="game-btn-desc">Indovina il paese</span>
+      </a>
+      <a class="game-btn" href="games/oracolo.html">
+        <span class="game-btn-icon">🔮</span>
+        <span class="game-btn-title">Oracolo del Mercato</span>
+        <span class="game-btn-desc">Il tuo futuro professionale</span>
+      </a>
+      <a class="game-btn" href="games/asta.html">
+        <span class="game-btn-icon">🏦</span>
+        <span class="game-btn-title">Asta Alcolica</span>
+        <span class="game-btn-desc">Offri in bicchieri</span>
+      </a>
+      <a class="game-btn" href="games/roulette.html">
+        <span class="game-btn-icon">🎲</span>
+        <span class="game-btn-title">Roulette degli Shot</span>
+        <span class="game-btn-desc">Chi beve lo shot vero?</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-frog">🐸</div>
+  <div class="footer-msg">"Tipo… ce l'ho fatta. Tipo."</div>
+  <div class="footer-sub">— Victoria Rozhko, Dott.ssa in Economia e Marketing Internazionale —</div>
+  <button class="confetti-btn" onclick="launchConfetti()">🎉 &nbsp; Festeggia! &nbsp; 🎉</button>
+</footer>
+
 <script>
-  const COLORS = [
-    { accent: '#5dcaa5', light: 'rgba(93,202,165,.15)', text: '#9fe1cb' },
-    { accent: '#7f77dd', light: 'rgba(127,119,221,.15)', text: '#afa9ec' },
-    { accent: '#d85a30', light: 'rgba(216,90,48,.15)', text: '#f0997b' },
-    { accent: '#378add', light: 'rgba(55,138,221,.15)', text: '#85b7eb' },
-    { accent: '#d4537e', light: 'rgba(212,83,126,.15)', text: '#ed93b1' },
-    { accent: '#ef9f27', light: 'rgba(239,159,39,.15)', text: '#fac775' },
-    { accent: '#639922', light: 'rgba(99,153,34,.15)', text: '#97c459' },
-    { accent: '#e24b4a', light: 'rgba(226,75,74,.15)', text: '#f09595' },
-  ];
+// ── FOTO ──
+function triggerUpload(i) { document.getElementById('file-'+i).click(); }
+function loadPhoto(i, input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('img-'+i);
+    img.src = e.target.result;
+    img.style.display = 'block';
+    img.parentElement.querySelector('.upload-icon').style.display = 'none';
+    img.parentElement.querySelector('.upload-hint').style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
 
-  let colorMap = {}, colorIdx = 0;
-  let tasks = JSON.parse(localStorage.getItem('tt_tasks') || '[]');
-  let timers = {};
-  let formOpen = true;
+// ── MESSAGGI ──
+function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function saveMessage() {
+  const author = document.getElementById('modalAuthor').value.trim();
+  const text   = document.getElementById('modalText').value.trim();
+  if (!author || !text) return;
+  const grid = document.getElementById('messagesGrid');
+  const card = document.createElement('div');
+  card.className = 'message-card';
+  card.innerHTML = `<div class="message-text">${text}</div><div class="message-author">— ${author}</div>`;
+  grid.appendChild(card);
+  document.getElementById('modalAuthor').value = '';
+  document.getElementById('modalText').value   = '';
+  closeModal();
+}
+document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
-  function getColor(commessa) {
-    const key = (commessa || '__none__').trim().toLowerCase();
-    if (!colorMap[key]) { colorMap[key] = COLORS[colorIdx % COLORS.length]; colorIdx++; }
-    return colorMap[key];
+// ── CONFETTI ──
+function launchConfetti() {
+  const colors = ['#C9973A','#2D5A3D','#8B2020','#F5F0E8','#3D2B1F','#E8C97A'];
+  for (let i = 0; i < 130; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-particle';
+      el.style.cssText = `left:${Math.random()*100}vw;top:-10px;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.5+Math.random()*2}s;`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 18);
   }
-
-  function save() {
-    localStorage.setItem('tt_tasks', JSON.stringify(tasks));
-  }
-
-  function toggleForm() {
-    formOpen = !formOpen;
-    document.getElementById('form-body').style.display = formOpen ? 'block' : 'none';
-    document.getElementById('chevron').className = 'chevron' + (formOpen ? ' open' : '');
-  }
-
-  function fmt(sec) {
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = sec % 60;
-    return h > 0
-      ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-      : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  }
-
-  function fmtH(sec) { return (sec / 3600).toFixed(2) + 'h'; }
-
-  function addTask() {
-    const name = document.getElementById('inp-name').value.trim();
-    const commessa = document.getElementById('inp-commessa').value.trim();
-    const hours = parseFloat(document.getElementById('inp-hours').value);
-    if (!name) { document.getElementById('inp-name').focus(); return; }
-    tasks.push({
-      id: Date.now(), name, commessa,
-      targetSec: hours > 0 ? Math.round(hours * 3600) : 0,
-      elapsed: 0, running: false, sessions: [],
-      color: getColor(commessa)
-    });
-    document.getElementById('inp-name').value = '';
-    document.getElementById('inp-commessa').value = '';
-    document.getElementById('inp-hours').value = '';
-    save(); render();
-  }
-
-  function startTimer(id) {
-    const t = tasks.find(x => x.id === id);
-    if (!t || t.running) return;
-    tasks.forEach(x => { if (x.running) stopTimer(x.id); });
-    t.running = true;
-    t.sessionStart = Date.now();
-    timers[id] = setInterval(() => { t.elapsed++; updateCard(t); updateStats(); }, 1000);
-    updateCard(t); updateStats();
-  }
-
-  function stopTimer(id) {
-    const t = tasks.find(x => x.id === id);
-    if (!t || !t.running) return;
-    clearInterval(timers[id]);
-    t.running = false;
-    const dur = Math.round((Date.now() - t.sessionStart) / 1000);
-    if (dur > 0) t.sessions.push({
-      at: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
-      dur, date: new Date().toLocaleDateString('it-IT')
-    });
-    delete t.sessionStart;
-    save(); updateCard(t); updateStats();
-  }
-
-  function deleteTask(id) {
-    if (timers[id]) { clearInterval(timers[id]); delete timers[id]; }
-    tasks = tasks.filter(x => x.id !== id);
-    save(); render();
-  }
-
-  function pct(t) {
-    return t.targetSec ? Math.min(100, Math.round((t.elapsed / t.targetSec) * 100)) : null;
-  }
-
-  function updateStats() {
-    const running = tasks.find(x => x.running);
-    document.getElementById('stat-active').textContent = tasks.length;
-    const total = tasks.reduce((a, t) => a + t.elapsed, 0);
-    document.getElementById('stat-hours').textContent = fmt(total);
-    const el = document.getElementById('stat-running');
-    el.textContent = running ? (running.name.length > 16 ? running.name.slice(0, 16) + '…' : running.name) : '—';
-    el.style.color = running ? running.color.accent : '#555a72';
-    el.style.fontSize = running ? '13px' : '14px';
-  }
-
-  function updateCard(t) {
-    const card = document.getElementById('card-' + t.id);
-    if (!card) return;
-    const c = t.color;
-    card.className = 'card' + (t.running ? ' running' : '');
-    card.style.setProperty('--accent', c.accent);
-    card.querySelector('.card-accent').style.background = t.running ? c.accent : 'var(--border)';
-    const timerEl = card.querySelector('.timer-num');
-    timerEl.textContent = fmt(t.elapsed);
-    timerEl.style.color = t.running ? c.accent : 'var(--text)';
-    const p = pct(t);
-    const fill = card.querySelector('.progress-fill');
-    const meta = card.querySelector('.progress-meta');
-    fill.style.width = (p || 0) + '%';
-    fill.style.background = p >= 100 ? '#639922' : c.accent;
-    meta.children[0].textContent = t.targetSec ? fmtH(t.elapsed) + ' / ' + fmtH(t.targetSec) : fmtH(t.elapsed);
-    meta.children[1].textContent = p !== null ? p + '%' : '';
-    const btn = card.querySelector('.btn-play');
-    if (t.running) {
-      btn.textContent = '⏹ Stop';
-      btn.style.cssText = `background:${c.light};color:${c.accent};border:0.5px solid ${c.accent}`;
-      btn.onclick = () => stopTimer(t.id);
-    } else {
-      btn.textContent = '▶ Avvia';
-      btn.style.cssText = `background:transparent;color:${c.accent};border:0.5px solid ${c.accent}`;
-      btn.onclick = () => startTimer(t.id);
-    }
-    const sl = card.querySelector('.session-list');
-    const sw = card.querySelector('.sessions-wrap');
-    if (t.sessions.length) {
-      sl.innerHTML = t.sessions.slice(-5).reverse()
-        .map(s => `<div class="session-row"><span>${s.date || ''} ${s.at}</span><span>+${fmt(s.dur)}</span></div>`).join('');
-      sw.style.display = 'block';
-    } else {
-      sw.style.display = 'none';
-    }
-  }
-
-  function render() {
-    const list = document.getElementById('tasks-list');
-    if (!tasks.length) {
-      list.innerHTML = '<div class="empty">Nessuna attività ancora — aggiungine una sopra per iniziare</div>';
-      updateStats(); return;
-    }
-    list.innerHTML = tasks.map(t => {
-      const c = t.color;
-      const p = pct(t);
-      return `<div class="card" id="card-${t.id}" style="--accent:${c.accent}">
-        <div class="card-accent" style="background:var(--border)"></div>
-        <div class="card-body">
-          <div class="card-top">
-            <div class="card-titles">
-              <div class="card-name">${t.name}</div>
-              ${t.commessa
-                ? `<span class="badge-commessa" style="background:${c.light};color:${c.text}">${t.commessa}</span>`
-                : `<span class="no-commessa">Nessuna commessa</span>`}
-            </div>
-            <div class="card-actions">
-              <button class="btn-play" style="background:transparent;color:${c.accent};border:0.5px solid ${c.accent}" onclick="startTimer(${t.id})">▶ Avvia</button>
-              <button class="btn-del" onclick="deleteTask(${t.id})">✕</button>
-            </div>
-          </div>
-          <div class="timer-row">
-            <span class="timer-num">${fmt(t.elapsed)}</span>
-            <div class="progress-wrap">
-              <div class="progress-bg">
-                <div class="progress-fill" style="width:${p || 0}%;background:${c.accent}"></div>
-              </div>
-              <div class="progress-meta">
-                <span>${t.targetSec ? fmtH(t.elapsed) + ' / ' + fmtH(t.targetSec) : fmtH(t.elapsed)}</span>
-                <span>${p !== null ? p + '%' : ''}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="sessions-wrap" style="display:none">
-          <div class="sessions-label">Sessioni registrate</div>
-          <div class="session-list"></div>
-        </div>
-      </div>`;
-    }).join('');
-    tasks.forEach(t => { t.color = getColor(t.commessa); updateCard(t); });
-    updateStats();
-  }
-
-  function exportCSV() {
-    const rows = [['Attività', 'Commessa', 'Data', 'Ora', 'Durata (hh:mm:ss)', 'Durata (ore)']];
-    tasks.forEach(t => {
-      if (!t.sessions.length) {
-        rows.push([t.name, t.commessa || '', '', '', fmt(t.elapsed), (t.elapsed / 3600).toFixed(2)]);
-      } else {
-        t.sessions.forEach(s => {
-          rows.push([t.name, t.commessa || '', s.date || '', s.at, fmt(s.dur), (s.dur / 3600).toFixed(2)]);
-        });
-      }
-    });
-    const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `time_tracker_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-  }
-
-  document.getElementById('inp-name').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
-  document.getElementById('today-date').textContent = new Date().toLocaleDateString('it-IT', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-  });
-
-  tasks.forEach(t => { t.color = getColor(t.commessa); });
-  render();
+}
 </script>
 </body>
 </html>

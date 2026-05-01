@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎲 Roulette degli Shot — Rana Laurea</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--green:#2D5A3D;--paper:#EDE8DC;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#1a3d2a;color:var(--cream);font-family:'Courier Prime',monospace;min-height:100vh;display:flex;flex-direction:column;}
+  .game-header{background:rgba(0,0,0,0.35);border-bottom:3px double var(--gold);padding:16px 24px;display:flex;align-items:center;gap:16px;}
+  .back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;}
+  .back-btn:hover{background:var(--gold);color:var(--brown);}
+  .game-header-title{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold);flex:1;text-align:center;}
+  .game-header-num{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,0.5);text-transform:uppercase;}
+  .game-body{flex:1;display:flex;align-items:center;justify-content:center;padding:36px 24px;}
+  .box{border:4px solid var(--gold);padding:36px 28px;max-width:520px;width:100%;text-align:center;background:rgba(0,0,0,0.2);}
+
+  /* setup */
+  .setup-label{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:10px;}
+  .setup-area{width:100%;font-family:'Courier Prime',monospace;font-size:13px;padding:12px;background:rgba(0,0,0,0.3);border:1px solid rgba(201,151,58,0.4);color:var(--cream);resize:vertical;min-height:120px;margin-bottom:12px;}
+  .setup-btn{font-family:'Special Elite',cursive;font-size:13px;letter-spacing:2px;padding:11px 28px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;}
+
+  /* game */
+  .player-label{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:rgba(201,151,58,.6);text-transform:uppercase;margin-bottom:4px;}
+  .player-name{font-family:'Playfair Display',serif;font-size:30px;color:var(--gold-light);font-style:italic;margin-bottom:20px;}
+  .wheel{width:200px;height:200px;border-radius:50%;background:#0f2318;border:7px solid var(--gold);box-shadow:0 0 0 4px var(--brown);margin:0 auto 24px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .pointer{font-size:64px;transition:transform 2.2s cubic-bezier(.17,.67,.12,.99);}
+  .shots-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:0 auto 18px;}
+  .shot{background:rgba(255,255,255,.08);border:2px solid rgba(201,151,58,.4);padding:16px 6px;font-size:30px;text-align:center;transition:all .3s;}
+  .shot.hot{border-color:var(--gold);background:rgba(201,151,58,.2);animation:pulse .4s ease-in-out infinite alternate;}
+  .shot.gone{opacity:.25;}
+  @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.08)}}
+  .result{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-light);font-style:italic;min-height:52px;margin:14px 0;line-height:1.35;}
+  .spin-btn{font-family:'Special Elite',cursive;font-size:14px;letter-spacing:3px;padding:14px 42px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;box-shadow:4px 4px 0 rgba(0,0,0,0.5);transition:all .15s;}
+  .spin-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
+  .spin-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  .reset-link{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;cursor:pointer;display:block;margin-top:18px;border:none;background:none;}
+  .reset-link:hover{color:var(--gold);}
+  .round-info{font-family:'Special Elite',cursive;font-size:10px;color:rgba(201,151,58,.4);letter-spacing:2px;margin-top:12px;}
+</style>
+</head>
+<body>
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div><div class="game-header-num">Gioco VII di VII</div><div class="game-header-title">Roulette degli Shot</div></div>
+  <div style="width:80px"></div>
+</header>
+<main class="game-body">
+  <div class="box">
+
+    <!-- SETUP -->
+    <div id="setup">
+      <span class="setup-label">Nomi dei giocatori (uno per riga)</span>
+      <textarea class="setup-area" id="playersInput" placeholder="Victoria&#10;Marco&#10;Carlotta&#10;Annalisa&#10;..."></textarea>
+      <button class="setup-btn" onclick="startGame()">Conferma ▶</button>
+    </div>
+
+    <!-- GAME -->
+    <div id="game" style="display:none">
+      <div class="player-label">Tocca a</div>
+      <div class="player-name" id="curPlayer">—</div>
+      <div class="wheel"><span class="pointer" id="ptr">🎯</span></div>
+      <div class="shots-row" id="shotRow"></div>
+      <div class="result" id="result"></div>
+      <button class="spin-btn" id="spinBtn" onclick="spin()">✦ Gira la Roulette ✦</button>
+      <div class="round-info" id="roundInfo"></div>
+      <button class="reset-link" onclick="resetGame()">↺ Ricomincia con nuovi giocatori</button>
+    </div>
+
+  </div>
+</main>
+<script>
+const SHOTS=6;
+let players=[],cur=0,round=0,poison=0,spinning=false,deg=0;
+
+function startGame(){
+  const raw=document.getElementById('playersInput').value.trim();
+  if(!raw)return;
+  players=raw.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(players.length<2){alert('Inserisci almeno 2 giocatori!');return;}
+  cur=0;
+  document.getElementById('setup').style.display='none';
+  document.getElementById('game').style.display='block';
+  newRound();
+}
+
+function newRound(){
+  round++;
+  poison=Math.floor(Math.random()*SHOTS);
+  renderShots();
+  updatePlayer();
+  document.getElementById('result').textContent='';
+  document.getElementById('spinBtn').disabled=false;
+  document.getElementById('roundInfo').textContent=`Round ${round} — ${players.length} giocatori`;
+}
+
+function renderShots(){
+  const r=document.getElementById('shotRow');
+  r.innerHTML='';
+  for(let i=0;i<SHOTS;i++){
+    const d=document.createElement('div');
+    d.className='shot';d.id='s'+i;d.textContent='🥂';
+    r.appendChild(d);
+  }
+}
+
+function updatePlayer(){
+  document.getElementById('curPlayer').textContent=players[cur%players.length];
+}
+
+function spin(){
+  if(spinning)return;
+  spinning=true;
+  document.getElementById('spinBtn').disabled=true;
+  const extra=(5+Math.floor(Math.random()*5))*360;
+  const land=poison*(360/SHOTS);
+  deg+=extra+land;
+  document.getElementById('ptr').style.transform=`rotate(${deg}deg)`;
+  setTimeout(()=>{
+    const el=document.getElementById('s'+poison);
+    el.classList.add('hot');el.textContent='🍺';
+    const player=players[cur%players.length];
+    const msgs=[
+      `💀 ${player} ha trovato lo shot! Salute!`,
+      `🍺 Tocca a ${player}! Il destino ha parlato.`,
+      `☠️ ${player} — nessuna via di scampo. Bevi.`,
+    ];
+    const safemsgs=[
+      `😅 Fortunato/a! Il prossimo aspetta…`,
+      `🍀 Salvo/a! Per ora.`,
+      `🎲 Questa volta no. Prossimo round!`,
+    ];
+    // 50% chance poison is "real" vs water
+    const real=Math.random()<.5;
+    document.getElementById('result').textContent=real
+      ?msgs[Math.floor(Math.random()*msgs.length)]
+      :safemsgs[Math.floor(Math.random()*safemsgs.length)];
+    setTimeout(()=>{
+      el.classList.remove('hot');el.classList.add('gone');el.textContent='🥂';
+      cur++;spinning=false;
+      setTimeout(newRound,1800);
+    },2200);
+  },2300);
+}
+
+function resetGame(){
+  document.getElementById('setup').style.display='block';
+  document.getElementById('game').style.display='none';
+  document.getElementById('playersInput').value='';
+  players=[];cur=0;round=0;deg=0;
+}
+</script>
+</body>
+</html>
