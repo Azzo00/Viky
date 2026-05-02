@@ -6,151 +6,584 @@
 <title>🎲 Roulette degli Shot — Rana Laurea</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--green:#2D5A3D;--paper:#EDE8DC;}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:#1a3d2a;color:var(--cream);font-family:'Courier Prime',monospace;min-height:100vh;display:flex;flex-direction:column;}
-  .game-header{background:rgba(0,0,0,0.35);border-bottom:3px double var(--gold);padding:16px 24px;display:flex;align-items:center;gap:16px;}
-  .back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;}
-  .back-btn:hover{background:var(--gold);color:var(--brown);}
-  .game-header-title{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold);flex:1;text-align:center;}
-  .game-header-num{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,0.5);text-transform:uppercase;}
-  .game-body{flex:1;display:flex;align-items:center;justify-content:center;padding:36px 24px;}
-  .box{border:4px solid var(--gold);padding:36px 28px;max-width:520px;width:100%;text-align:center;background:rgba(0,0,0,0.2);}
+:root {
+  --cream:#F5F0E8; --brown:#3D2B1F; --gold:#C9973A; --gold-light:#E8C97A;
+  --red:#8B2020; --dark:#0D0A07; --paper:#E8E0CC; --paper2:#DED5BC;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body {
+  background:var(--dark); color:var(--cream);
+  font-family:'Courier Prime',monospace;
+  min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden;
+}
 
-  /* setup */
-  .setup-label{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:10px;}
-  .setup-area{width:100%;font-family:'Courier Prime',monospace;font-size:13px;padding:12px;background:rgba(0,0,0,0.3);border:1px solid rgba(201,151,58,0.4);color:var(--cream);resize:vertical;min-height:120px;margin-bottom:12px;}
-  .setup-btn{font-family:'Special Elite',cursive;font-size:13px;letter-spacing:2px;padding:11px 28px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;}
+/* HEADER */
+.game-header {
+  background:rgba(0,0,0,.6); border-bottom:2px solid var(--gold);
+  padding:14px 24px; display:flex; align-items:center; gap:16px;
+  position:sticky; top:0; z-index:100; backdrop-filter:blur(8px);
+}
+.back-btn {
+  font-family:'Special Elite',cursive; font-size:11px; letter-spacing:2px;
+  padding:7px 16px; border:1.5px solid var(--gold); background:transparent;
+  color:var(--gold); cursor:pointer; text-decoration:none; text-transform:uppercase;
+  transition:all .2s; white-space:nowrap;
+}
+.back-btn:hover{background:var(--gold);color:var(--brown);}
+.header-center{flex:1;text-align:center;}
+.hnum{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;}
+.htitle{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--gold);}
 
-  /* game */
-  .player-label{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:rgba(201,151,58,.6);text-transform:uppercase;margin-bottom:4px;}
-  .player-name{font-family:'Playfair Display',serif;font-size:30px;color:var(--gold-light);font-style:italic;margin-bottom:20px;}
-  .wheel{width:200px;height:200px;border-radius:50%;background:#0f2318;border:7px solid var(--gold);box-shadow:0 0 0 4px var(--brown);margin:0 auto 24px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-  .pointer{font-size:64px;transition:transform 2.2s cubic-bezier(.17,.67,.12,.99);}
-  .shots-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:0 auto 18px;}
-  .shot{background:rgba(255,255,255,.08);border:2px solid rgba(201,151,58,.4);padding:16px 6px;font-size:30px;text-align:center;transition:all .3s;}
-  .shot.hot{border-color:var(--gold);background:rgba(201,151,58,.2);animation:pulse .4s ease-in-out infinite alternate;}
-  .shot.gone{opacity:.25;}
-  @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.08)}}
-  .result{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-light);font-style:italic;min-height:52px;margin:14px 0;line-height:1.35;}
-  .spin-btn{font-family:'Special Elite',cursive;font-size:14px;letter-spacing:3px;padding:14px 42px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;box-shadow:4px 4px 0 rgba(0,0,0,0.5);transition:all .15s;}
-  .spin-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,.5);}
-  .spin-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-  .reset-link{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;cursor:pointer;display:block;margin-top:18px;border:none;background:none;}
-  .reset-link:hover{color:var(--gold);}
-  .round-info{font-family:'Special Elite',cursive;font-size:10px;color:rgba(201,151,58,.4);letter-spacing:2px;margin-top:12px;}
+/* SETUP */
+.setup-screen{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.setup-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:44px 40px;max-width:460px;width:100%;text-align:center;animation:fadeUp .5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.setup-title{font-family:'Playfair Display',serif;font-size:32px;font-style:italic;color:var(--gold);margin-bottom:6px;}
+.setup-sub{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.4);text-transform:uppercase;margin-bottom:32px;}
+.setup-label{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.55);text-transform:uppercase;display:block;text-align:left;margin-bottom:7px;}
+.setup-textarea{width:100%;font-family:'Courier Prime',monospace;font-size:13px;padding:12px 16px;border:1.5px solid rgba(201,151,58,.28);background:rgba(201,151,58,.04);color:var(--cream);margin-bottom:20px;resize:vertical;min-height:130px;transition:border-color .2s;}
+.setup-textarea:focus{outline:none;border-color:var(--gold);}
+.setup-row{display:flex;gap:12px;margin-bottom:24px;text-align:left;}
+.setup-row>div{flex:1;}
+.setup-num{width:100%;font-family:'Courier Prime',monospace;font-size:13px;padding:10px 14px;border:1.5px solid rgba(201,151,58,.28);background:rgba(201,151,58,.04);color:var(--cream);transition:border-color .2s;}
+.setup-num:focus{outline:none;border-color:var(--gold);}
+.start-btn{font-family:'Special Elite',cursive;font-size:13px;letter-spacing:3px;padding:14px 42px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;box-shadow:5px 5px 0 rgba(201,151,58,.15);transition:all .15s;}
+.start-btn:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 rgba(201,151,58,.15);}
+
+/* GAME */
+.game-screen{flex:1;display:none;flex-direction:column;align-items:center;padding:28px 20px 48px;}
+
+/* Player bar */
+.player-bar{width:100%;max-width:640px;margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.player-tag{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;margin-bottom:3px;}
+.player-name{font-family:'Playfair Display',serif;font-size:26px;font-style:italic;color:var(--gold-light);transition:all .4s;}
+.round-info{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;text-align:right;}
+
+/* chips */
+.players-row{width:100%;max-width:640px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
+.chip{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:1px;padding:5px 13px;border:1px solid rgba(201,151,58,.2);color:rgba(201,151,58,.38);text-transform:uppercase;transition:all .35s;}
+.chip.active{border-color:var(--gold);color:var(--gold);background:rgba(201,151,58,.08);box-shadow:0 0 10px rgba(201,151,58,.18);}
+
+/* ═══ CANVAS WRAPPER ═══ */
+.wheel-wrap{position:relative;margin:0 auto 24px;}
+canvas{display:block;border-radius:50%;}
+
+/* ═══ RESULT DISPLAY ═══ */
+.result-area{width:100%;max-width:640px;text-align:center;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:4px;}
+.result-msg{font-family:'Playfair Display',serif;font-size:clamp(17px,2.8vw,24px);font-style:italic;color:var(--gold-light);line-height:1.35;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s;}
+.result-msg.show{opacity:1;transform:translateY(0);}
+.result-sub{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.38);text-transform:uppercase;margin-top:6px;opacity:0;transition:opacity .5s .2s;}
+.result-sub.show{opacity:1;}
+
+/* ═══ BUTTONS ═══ */
+.spin-btn{font-family:'Special Elite',cursive;font-size:14px;letter-spacing:4px;padding:15px 50px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;box-shadow:0 4px 20px rgba(201,151,58,.3),6px 6px 0 rgba(0,0,0,.4);transition:all .2s;position:relative;overflow:hidden;}
+.spin-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.15) 50%,transparent 70%);transform:translateX(-100%);transition:transform .4s;}
+.spin-btn:hover::before{transform:translateX(100%);}
+.spin-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(201,151,58,.4),6px 8px 0 rgba(0,0,0,.4);}
+.spin-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.action-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;justify-content:center;}
+.ghost-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:9px 20px;border:1.5px solid rgba(201,151,58,.25);background:transparent;color:rgba(201,151,58,.5);cursor:pointer;text-transform:uppercase;transition:all .2s;}
+.ghost-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);border:1.5px solid var(--gold);color:var(--gold);font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:12px 28px;text-transform:uppercase;z-index:600;white-space:nowrap;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .35s;opacity:0;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+@media(max-width:420px){
+  .setup-box{padding:30px 20px;}
+  .spin-btn{padding:13px 36px;font-size:12px;}
+}
 </style>
 </head>
 <body>
+
 <header class="game-header">
   <a class="back-btn" href="../index.html">← Torna</a>
-  <div><div class="game-header-num">Gioco VII di VII</div><div class="game-header-title">Roulette degli Shot</div></div>
+  <div class="header-center">
+    <div class="hnum">Gioco VII di VII</div>
+    <div class="htitle">Roulette degli Shot</div>
+  </div>
   <div style="width:80px"></div>
 </header>
-<main class="game-body">
-  <div class="box">
 
-    <!-- SETUP -->
-    <div id="setup">
-      <span class="setup-label">Nomi dei giocatori (uno per riga)</span>
-      <textarea class="setup-area" id="playersInput" placeholder="Victoria&#10;Marco&#10;Carlotta&#10;Annalisa&#10;..."></textarea>
-      <button class="setup-btn" onclick="startGame()">Conferma ▶</button>
+<!-- SETUP -->
+<div class="setup-screen" id="setupScreen">
+  <div class="setup-box">
+    <div class="setup-title">Roulette degli Shot</div>
+    <div class="setup-sub">◆ &nbsp; il destino decide chi beve &nbsp; ◆</div>
+    <span class="setup-label">Nomi dei giocatori (uno per riga)</span>
+    <textarea class="setup-textarea" id="playersInput" placeholder="Victoria&#10;Marco&#10;Carlotta&#10;Annalisa&#10;..."></textarea>
+    <div class="setup-row">
+      <div>
+        <span class="setup-label">Bicchierini totali</span>
+        <input class="setup-num" type="number" id="numSlots" value="8" min="4" max="16">
+      </div>
+      <div>
+        <span class="setup-label">Bicchierini "veri"</span>
+        <input class="setup-num" type="number" id="numPoison" value="2" min="1" max="8">
+      </div>
     </div>
-
-    <!-- GAME -->
-    <div id="game" style="display:none">
-      <div class="player-label">Tocca a</div>
-      <div class="player-name" id="curPlayer">—</div>
-      <div class="wheel"><span class="pointer" id="ptr">🎯</span></div>
-      <div class="shots-row" id="shotRow"></div>
-      <div class="result" id="result"></div>
-      <button class="spin-btn" id="spinBtn" onclick="spin()">✦ Gira la Roulette ✦</button>
-      <div class="round-info" id="roundInfo"></div>
-      <button class="reset-link" onclick="resetGame()">↺ Ricomincia con nuovi giocatori</button>
-    </div>
-
+    <button class="start-btn" onclick="startGame()">✦ Inizia la partita ✦</button>
   </div>
-</main>
-<script>
-const SHOTS=6;
-let players=[],cur=0,round=0,poison=0,spinning=false,deg=0;
+</div>
 
+<!-- GAME -->
+<div class="game-screen" id="gameScreen">
+  <div class="player-bar">
+    <div>
+      <div class="player-tag">Tocca a</div>
+      <div class="player-name" id="playerName">—</div>
+    </div>
+    <div class="round-info" id="roundInfo">Round 1</div>
+  </div>
+  <div class="players-row" id="playersRow"></div>
+
+  <!-- CANVAS -->
+  <div class="wheel-wrap" id="wheelWrap">
+    <canvas id="c"></canvas>
+  </div>
+
+  <div class="result-area">
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="result-sub" id="resultSub"></div>
+  </div>
+
+  <button class="spin-btn" id="spinBtn" onclick="spin()">✦ GIRA ✦</button>
+  <div class="action-row">
+    <button class="ghost-btn" id="nextBtn" style="display:none" onclick="nextPlayer()">Prossimo giocatore →</button>
+    <button class="ghost-btn" onclick="resetGame()">↺ Nuova partita</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════
+   CONFIG & STATE
+══════════════════════════════ */
+let players=[], numSlots=8, numPoison=2;
+let curPlayer=0, round=1;
+let poisonSlots=new Set();
+
+// animation state
+let wheelAngle   = 0;   // the wheel itself rotates slowly (cosmetic)
+let ballAngle    = 0;   // ball position on outer track (0 = top)
+let ballRadius   = 0;   // starts large (outer track), drops to slot radius
+let spinning     = false;
+let raf          = null;
+
+// canvas / geometry (set on init)
+let CX, CY, R_OUTER, R_WHEEL, R_SLOT, R_BALL;
+
+/* ══════════════════════════════
+   SETUP
+══════════════════════════════ */
 function startGame(){
   const raw=document.getElementById('playersInput').value.trim();
-  if(!raw)return;
+  if(!raw){showToast('Inserisci almeno un giocatore!');return;}
   players=raw.split('\n').map(s=>s.trim()).filter(Boolean);
-  if(players.length<2){alert('Inserisci almeno 2 giocatori!');return;}
-  cur=0;
-  document.getElementById('setup').style.display='none';
-  document.getElementById('game').style.display='block';
+  if(players.length<2){showToast('Servono almeno 2 giocatori!');return;}
+  numSlots =Math.max(4,Math.min(16,parseInt(document.getElementById('numSlots').value)||8));
+  numPoison=Math.max(1,Math.min(numSlots-1,parseInt(document.getElementById('numPoison').value)||2));
+
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='flex';
+
+  initCanvas();
   newRound();
 }
 
+function initCanvas(){
+  const wrap=document.getElementById('wheelWrap');
+  const size=Math.min(window.innerWidth-48,420);
+  const canvas=document.getElementById('c');
+  canvas.width=canvas.height=size;
+  wrap.style.width=wrap.style.height=size+'px';
+
+  CX=CY=size/2;
+  R_OUTER = size/2 - 4;          // ball track outer edge
+  R_WHEEL = R_OUTER - 28;        // wheel face starts here
+  R_SLOT  = R_WHEEL - 18;        // center of number slots (pockets)
+  R_BALL  = 7;
+
+  ballRadius = R_OUTER - 10;     // ball starts on outer track
+  drawFrame();
+}
+
+/* ══════════════════════════════
+   ROUND INIT
+══════════════════════════════ */
 function newRound(){
-  round++;
-  poison=Math.floor(Math.random()*SHOTS);
-  renderShots();
-  updatePlayer();
-  document.getElementById('result').textContent='';
+  // randomise poison slots
+  poisonSlots.clear();
+  const idx=[...Array(numSlots).keys()];
+  shuffle(idx);
+  idx.slice(0,numPoison).forEach(i=>poisonSlots.add(i));
+
+  renderPlayers();
+  updateHeader();
+  clearResult();
   document.getElementById('spinBtn').disabled=false;
-  document.getElementById('roundInfo').textContent=`Round ${round} — ${players.length} giocatori`;
+  document.getElementById('nextBtn').style.display='none';
+  ballRadius=R_OUTER-10;
+  ballAngle=Math.random()*Math.PI*2;
+  drawFrame();
 }
 
-function renderShots(){
-  const r=document.getElementById('shotRow');
-  r.innerHTML='';
-  for(let i=0;i<SHOTS;i++){
-    const d=document.createElement('div');
-    d.className='shot';d.id='s'+i;d.textContent='🥂';
-    r.appendChild(d);
+/* ══════════════════════════════
+   DRAW
+══════════════════════════════ */
+function drawFrame(landedSlot=-1){
+  const canvas=document.getElementById('c');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const size=canvas.width;
+  ctx.clearRect(0,0,size,size);
+
+  drawTable(ctx, size);
+  drawWheel(ctx, landedSlot);
+  drawBall(ctx, landedSlot);
+}
+
+function drawTable(ctx,size){
+  // dark outer ring
+  ctx.beginPath();
+  ctx.arc(CX,CY,R_OUTER+4,0,Math.PI*2);
+  const outerGrad=ctx.createRadialGradient(CX,CY,R_OUTER-4,CX,CY,R_OUTER+4);
+  outerGrad.addColorStop(0,'#1a1000');
+  outerGrad.addColorStop(1,'#0a0800');
+  ctx.fillStyle=outerGrad;
+  ctx.fill();
+
+  // gold outer border
+  ctx.beginPath();
+  ctx.arc(CX,CY,R_OUTER+4,0,Math.PI*2);
+  ctx.strokeStyle='rgba(201,151,58,0.9)';
+  ctx.lineWidth=3;
+  ctx.stroke();
+
+  // ball track ring (lighter)
+  ctx.beginPath();
+  ctx.arc(CX,CY,R_OUTER,0,Math.PI*2);
+  ctx.strokeStyle='rgba(201,151,58,0.35)';
+  ctx.lineWidth=18;
+  ctx.stroke();
+
+  // inner border of track
+  ctx.beginPath();
+  ctx.arc(CX,CY,R_WHEEL+2,0,Math.PI*2);
+  ctx.strokeStyle='rgba(201,151,58,0.7)';
+  ctx.lineWidth=2;
+  ctx.stroke();
+}
+
+function drawWheel(ctx, landedSlot){
+  const sliceAngle=(Math.PI*2)/numSlots;
+
+  for(let i=0;i<numSlots;i++){
+    const start = wheelAngle + i*sliceAngle;
+    const end   = start + sliceAngle;
+    const isPoison = poisonSlots.has(i);
+    const isLanded = (i===landedSlot);
+
+    // slice
+    ctx.beginPath();
+    ctx.moveTo(CX,CY);
+    ctx.arc(CX,CY,R_WHEEL,start,end);
+    ctx.closePath();
+
+    let fill;
+    if(isLanded){
+      // bright highlight for landed slot
+      const g=ctx.createRadialGradient(CX,CY,0,CX,CY,R_WHEEL);
+      g.addColorStop(0,isPoison?'#7a1010':'#c9973a');
+      g.addColorStop(1,isPoison?'#3d0505':'#7a5a10');
+      fill=g;
+    } else if(isPoison){
+      fill= i%2===0 ? '#3d0808' : '#300606';
+    } else {
+      fill= i%2===0 ? '#0f1a10' : '#0a1209';
+    }
+
+    ctx.fillStyle=fill;
+    ctx.fill();
+
+    // slice border
+    ctx.beginPath();
+    ctx.moveTo(CX,CY);
+    ctx.arc(CX,CY,R_WHEEL,start,end);
+    ctx.closePath();
+    ctx.strokeStyle='rgba(201,151,58,0.3)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    // pocket / number circle
+    const midA = wheelAngle + i*sliceAngle + sliceAngle/2;
+    const px=CX+Math.cos(midA)*R_SLOT;
+    const py=CY+Math.sin(midA)*R_SLOT;
+
+    ctx.beginPath();
+    ctx.arc(px,py,11,0,Math.PI*2);
+    ctx.fillStyle=isLanded
+      ? (isPoison ? '#ff4444' : '#e8c97a')
+      : (isPoison ? '#6b1010' : '#1a2e1a');
+    ctx.fill();
+    ctx.strokeStyle=isLanded ? 'rgba(255,255,255,0.6)' : 'rgba(201,151,58,0.4)';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+
+    // number
+    ctx.save();
+    ctx.translate(px,py);
+    ctx.font=`bold 10px 'Courier Prime',monospace`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillStyle=isLanded
+      ? (isPoison ? '#fff' : '#3d2b1f')
+      : (isPoison ? '#ff8888' : '#4a7a4a');
+    ctx.fillText(String(i+1),0,0);
+    ctx.restore();
+
+    // emoji on slice body
+    const eR=R_WHEEL*0.55;
+    const ex=CX+Math.cos(midA)*eR;
+    const ey=CY+Math.sin(midA)*eR;
+    ctx.save();
+    ctx.translate(ex,ey);
+    ctx.rotate(midA+Math.PI/2);
+    ctx.font='14px serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.globalAlpha=isLanded?1:0.65;
+    ctx.fillText(isPoison?'🍺':'🥂',0,0);
+    ctx.restore();
   }
+
+  // center hub
+  const hubGrad=ctx.createRadialGradient(CX-6,CY-6,3,CX,CY,22);
+  hubGrad.addColorStop(0,'#E8C97A');
+  hubGrad.addColorStop(0.5,'#C9973A');
+  hubGrad.addColorStop(1,'#6b4c10');
+  ctx.beginPath();
+  ctx.arc(CX,CY,20,0,Math.PI*2);
+  ctx.fillStyle=hubGrad;
+  ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,0.5)';
+  ctx.lineWidth=2;
+  ctx.stroke();
+
+  // hub shine
+  ctx.beginPath();
+  ctx.arc(CX-5,CY-5,6,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.18)';
+  ctx.fill();
 }
 
-function updatePlayer(){
-  document.getElementById('curPlayer').textContent=players[cur%players.length];
+function drawBall(ctx, landedSlot){
+  // don't draw ball if spin hasn't started yet and no landed slot
+  if(landedSlot<0 && !spinning && ballRadius===R_OUTER-10 && !spinStarted) return;
+
+  const bx=CX+Math.cos(ballAngle)*ballRadius;
+  const by=CY+Math.sin(ballAngle)*ballRadius;
+
+  // shadow
+  ctx.beginPath();
+  ctx.arc(bx+2,by+3,R_BALL,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.4)';
+  ctx.fill();
+
+  // ball
+  const ballGrad=ctx.createRadialGradient(bx-3,by-3,1,bx,by,R_BALL);
+  ballGrad.addColorStop(0,'#ffffff');
+  ballGrad.addColorStop(0.4,'#dddddd');
+  ballGrad.addColorStop(1,'#888888');
+  ctx.beginPath();
+  ctx.arc(bx,by,R_BALL,0,Math.PI*2);
+  ctx.fillStyle=ballGrad;
+  ctx.fill();
+
+  // shine
+  ctx.beginPath();
+  ctx.arc(bx-2,by-2,2.5,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.7)';
+  ctx.fill();
 }
+
+/* ══════════════════════════════
+   SPIN LOGIC
+══════════════════════════════ */
+let spinStarted=false;
 
 function spin(){
   if(spinning)return;
   spinning=true;
+  spinStarted=true;
   document.getElementById('spinBtn').disabled=true;
-  const extra=(5+Math.floor(Math.random()*5))*360;
-  const land=poison*(360/SHOTS);
-  deg+=extra+land;
-  document.getElementById('ptr').style.transform=`rotate(${deg}deg)`;
+  clearResult();
+
+  const sliceAngle = (Math.PI*2) / numSlots;
+
+  // 1. Pick target slot
+  const wantSlot = pickFinalSlot();
+
+  // 2. Wheel final angle (CW)
+  const wheelSpins = 2 + Math.random()*1.5;
+  const wheelStart = wheelAngle;
+  const wheelFinal = wheelStart + Math.PI*2 * wheelSpins;
+
+  // 3. Center of wantSlot in world-space at wheelFinal
+  //    drawWheel paints slot i from: wheelAngle + i*sliceAngle
+  //    so center = wheelFinal + wantSlot*sliceAngle + sliceAngle/2
+  const slotWorldCenter = wheelFinal + wantSlot * sliceAngle + sliceAngle/2;
+
+  // 4. Ball goes CCW, lands exactly at slotWorldCenter
+  // Use integer full-rotations so the arc is exact (no float rounding issues)
+  const ballFullRotations = 6 + Math.floor(Math.random()*5);
+  const ballStart = ballAngle;
+  const ballFinal = slotWorldCenter - Math.PI*2 * ballFullRotations;
+
+  const rStart = R_OUTER - 10;
+  const rEnd   = R_SLOT;
+  const duration = 4500 + Math.random()*800;
+  const t0 = performance.now();
+
+  function easeOut(t){ return 1-Math.pow(1-t,4); }
+  function easeInOutSine(t){ return -(Math.cos(Math.PI*t)-1)/2; }
+
+  function frame(now){
+    const elapsed = now - t0;
+    const t = Math.min(elapsed/duration, 1);
+    const e = easeOut(t);
+
+    wheelAngle = wheelStart + (wheelFinal - wheelStart) * e;
+    ballAngle  = ballStart  + (ballFinal  - ballStart)  * e;
+
+    if(t < 0.70){
+      ballRadius = rStart + Math.sin(elapsed/60)*2.5*(1-t/0.70);
+    } else {
+      const dropT = (t-0.70)/0.30;
+      ballRadius = rStart + (rEnd-rStart)*easeInOutSine(Math.min(dropT,1));
+    }
+
+    drawFrame(-1);
+
+    if(t < 1){
+      raf = requestAnimationFrame(frame);
+    } else {
+      // Hard-snap to exact values — ball is by definition inside wantSlot
+      wheelAngle = wheelFinal;
+      ballAngle  = slotWorldCenter;
+      ballRadius = rEnd;
+
+      drawFrame(wantSlot);
+      spinning    = false;
+      spinStarted = false;
+      onLand(wantSlot);
+    }
+  }
+
+  ballRadius = rStart;
+  raf = requestAnimationFrame(frame);
+}
+
+function pickFinalSlot(){
+  const all    = [...Array(numSlots).keys()];
+  const poison = [...poisonSlots];
+  const safe   = all.filter(i=>!poisonSlots.has(i));
+  // 40% chance of landing on a poison slot for drama
+  return Math.random()<0.4
+    ? poison[Math.floor(Math.random()*poison.length)]
+    : safe[Math.floor(Math.random()*safe.length)];
+}
+
+function onLand(slot){
+  const isPoison=poisonSlots.has(slot);
+  const player=players[curPlayer];
+
+  const drinkMsgs=[
+    `💀 ${player} ha trovato lo shot! Cin cin!`,
+    `🍺 Il ${slot+1} era quello vero — tocca a ${player}!`,
+    `☠️ Destino crudele per ${player}. Bevi tutto!`,
+    `🔮 Il numero ${slot+1} non mente — bevi, ${player}!`,
+  ];
+  const safeMsgs=[
+    `😅 Acqua! ${player} è salvo/a questa volta.`,
+    `🍀 Il ${slot+1} era buono — ${player} respira!`,
+    `✨ Fortuna per ${player}. Prossimo!`,
+    `🎲 ${player} se la cava — per ora.`,
+  ];
+
+  const msg=isPoison
+    ? drinkMsgs[Math.floor(Math.random()*drinkMsgs.length)]
+    : safeMsgs[Math.floor(Math.random()*safeMsgs.length)];
+
   setTimeout(()=>{
-    const el=document.getElementById('s'+poison);
-    el.classList.add('hot');el.textContent='🍺';
-    const player=players[cur%players.length];
-    const msgs=[
-      `💀 ${player} ha trovato lo shot! Salute!`,
-      `🍺 Tocca a ${player}! Il destino ha parlato.`,
-      `☠️ ${player} — nessuna via di scampo. Bevi.`,
-    ];
-    const safemsgs=[
-      `😅 Fortunato/a! Il prossimo aspetta…`,
-      `🍀 Salvo/a! Per ora.`,
-      `🎲 Questa volta no. Prossimo round!`,
-    ];
-    // 50% chance poison is "real" vs water
-    const real=Math.random()<.5;
-    document.getElementById('result').textContent=real
-      ?msgs[Math.floor(Math.random()*msgs.length)]
-      :safemsgs[Math.floor(Math.random()*safemsgs.length)];
-    setTimeout(()=>{
-      el.classList.remove('hot');el.classList.add('gone');el.textContent='🥂';
-      cur++;spinning=false;
-      setTimeout(newRound,1800);
-    },2200);
-  },2300);
+    const rm=document.getElementById('resultMsg');
+    const rs=document.getElementById('resultSub');
+    rm.textContent=msg;
+    rs.textContent=isPoison
+      ? `◆ Slot ${slot+1} — era lo shot vero ◆`
+      : `◆ Slot ${slot+1} — era acqua ◆`;
+    rm.classList.add('show');
+    rs.classList.add('show');
+    document.getElementById('nextBtn').style.display='inline-block';
+  },250);
+}
+
+/* ══════════════════════════════
+   NAV
+══════════════════════════════ */
+function nextPlayer(){
+  curPlayer=(curPlayer+1)%players.length;
+  if(curPlayer===0) round++;
+  newRound();
+  updateHeader();
 }
 
 function resetGame(){
-  document.getElementById('setup').style.display='block';
-  document.getElementById('game').style.display='none';
-  document.getElementById('playersInput').value='';
-  players=[];cur=0;round=0;deg=0;
+  cancelAnimationFrame(raf);
+  spinning=false; spinStarted=false;
+  curPlayer=0; round=1;
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('setupScreen').style.display='flex';
 }
+
+function updateHeader(){
+  document.getElementById('playerName').textContent=players[curPlayer];
+  document.getElementById('roundInfo').textContent=`Round ${round}`;
+}
+
+function renderPlayers(){
+  document.getElementById('playersRow').innerHTML=
+    players.map((p,i)=>`<div class="chip ${i===curPlayer?'active':''}">${p}</div>`).join('');
+}
+
+function clearResult(){
+  document.getElementById('resultMsg').classList.remove('show');
+  document.getElementById('resultSub').classList.remove('show');
+  document.getElementById('nextBtn').style.display='none';
+}
+
+/* ══════════════════════════════
+   UTILS
+══════════════════════════════ */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+
+let toastT;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// slow idle rotation — paused during spin so wheelAngle is not corrupted
+(function idleRotate(){
+  if(!spinning){
+    wheelAngle += 0.002;
+    drawFrame(-1);
+  }
+  requestAnimationFrame(idleRotate);
+})();
 </script>
 </body>
 </html>
