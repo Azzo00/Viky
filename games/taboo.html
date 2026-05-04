@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🃏 Taboo — Rana Laurea</title>
+<title>🃏 Taboo — Conduttore</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--dark:#0D0A07;--green:#2D5A3D;--paper:#E8E0CC;--paper2:#DED5BC;}
@@ -19,88 +19,96 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .htitle{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--gold);}
 
 .main{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px 56px;position:relative;z-index:1;}
-.screen{width:100%;max-width:680px;}
+.screen{width:100%;max-width:620px;}
 .hidden{display:none!important;}
 
-/* SETUP */
-.setup-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:52px 40px;text-align:center;animation:fadeUp .5s ease both;}
+/* ── SETUP ── */
+.setup-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:48px 40px;text-align:center;animation:fadeUp .5s ease both;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .setup-eyebrow{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:5px;color:rgba(201,151,58,.5);text-transform:uppercase;margin-bottom:12px;}
-.setup-title{font-family:'Playfair Display',serif;font-size:clamp(36px,7vw,64px);color:var(--gold);font-style:italic;line-height:1;margin-bottom:6px;}
-.setup-sub{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:4px;color:rgba(201,151,58,.45);text-transform:uppercase;margin-bottom:36px;}
-.rules-box{background:rgba(0,0,0,.3);border:1px solid rgba(201,151,58,.2);padding:20px 24px;margin-bottom:32px;text-align:left;}
-.rules-title{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
-.rules-list{list-style:none;}
-.rules-list li{font-size:13px;color:rgba(232,224,204,.75);line-height:1.7;padding:3px 0;}
-.rules-list li::before{content:'◆ ';color:var(--gold);}
-.field-wrap{text-align:left;width:100%;max-width:340px;margin:0 auto 20px;}
+.setup-title{font-family:'Playfair Display',serif;font-size:clamp(36px,7vw,60px);color:var(--gold);font-style:italic;line-height:1;margin-bottom:6px;}
+.setup-sub{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:4px;color:rgba(201,151,58,.45);text-transform:uppercase;margin-bottom:28px;}
+
+.how-it-works{background:rgba(0,0,0,.35);border:1px solid rgba(201,151,58,.2);padding:18px 22px;margin-bottom:28px;text-align:left;}
+.how-title{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
+.how-list{list-style:none;}
+.how-list li{font-size:13px;color:rgba(232,224,204,.75);line-height:1.8;padding:1px 0;}
+.how-list li::before{content:'◆ ';color:var(--gold);}
+
+.field-wrap{text-align:left;width:100%;max-width:320px;margin:0 auto 20px;}
 .field-label{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.55);text-transform:uppercase;display:block;margin-bottom:7px;}
 .setup-input{width:100%;font-family:'Courier Prime',monospace;font-size:14px;padding:12px 16px;border:1.5px solid rgba(201,151,58,.3);background:rgba(201,151,58,.05);color:var(--cream);transition:border-color .2s;}
 .setup-input:focus{outline:none;border-color:var(--gold);}
+
+.projector-notice{background:rgba(201,151,58,.08);border:1px solid rgba(201,151,58,.3);padding:14px 18px;margin-bottom:24px;font-size:13px;color:rgba(232,224,204,.8);line-height:1.6;text-align:left;}
+.projector-notice strong{color:var(--gold);}
+
 .start-btn{font-family:'Special Elite',cursive;font-size:14px;letter-spacing:4px;padding:16px 48px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;box-shadow:6px 6px 0 rgba(201,151,58,.15);transition:all .15s;position:relative;overflow:hidden;}
 .start-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.15) 50%,transparent 70%);transform:translateX(-100%);transition:transform .4s;}
 .start-btn:hover::before{transform:translateX(100%);}
 .start-btn:hover{transform:translate(2px,2px);box-shadow:4px 4px 0 rgba(201,151,58,.15);}
 
-/* GAME */
-.game-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
-.player-turn{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold-light);}
-.player-tag{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;display:block;margin-bottom:3px;}
+/* ── GAME ── */
+.game-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
+.turn-info{} 
+.turn-tag{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;display:block;margin-bottom:3px;}
+.turn-name{font-family:'Playfair Display',serif;font-size:24px;font-style:italic;color:var(--gold-light);}
 
-/* Timer bar */
-.timer-bar-wrap{width:100%;height:8px;background:rgba(201,151,58,.15);border-radius:4px;margin-bottom:24px;overflow:hidden;}
-.timer-bar{height:100%;background:var(--gold);border-radius:4px;transition:width 1s linear, background .5s;}
-.timer-num-top{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);font-weight:700;text-align:center;margin-bottom:12px;transition:color .5s;}
-.timer-num-top.urgent{color:#ff6644;animation:urg .5s ease-in-out infinite alternate;}
-@keyframes urg{from{transform:scale(1)}to{transform:scale(1.08)}}
+/* Score boxes */
+.score-row{display:flex;gap:10px;flex-wrap:wrap;}
+.score-box{background:rgba(0,0,0,.4);border:1px solid rgba(201,151,58,.2);padding:8px 14px;text-align:center;min-width:70px;}
+.score-lbl{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;display:block;margin-bottom:2px;}
+.score-val{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);font-weight:700;}
 
-/* Card */
-.taboo-card{background:var(--paper);border:3px solid var(--brown);padding:36px 28px;box-shadow:8px 8px 0 var(--gold),12px 12px 0 rgba(201,151,58,.15);position:relative;animation:cardIn .4s cubic-bezier(.16,1,.3,1) both;}
-@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.card-label{position:absolute;top:-13px;left:20px;background:var(--red);color:white;font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;padding:3px 14px;text-transform:uppercase;}
-.word-to-guess{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,48px);font-weight:700;color:var(--brown);text-align:center;margin-bottom:24px;line-height:1;}
-.forbidden-label{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:var(--red);text-transform:uppercase;text-align:center;margin-bottom:14px;}
-.forbidden-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
-.forbidden-item{background:rgba(139,32,32,.12);border:1px solid rgba(139,32,32,.35);padding:10px 16px;font-family:'Playfair Display',serif;font-size:17px;font-style:italic;color:var(--brown);text-align:center;position:relative;}
-.forbidden-item::before,.forbidden-item::after{content:'✕';position:absolute;top:50%;transform:translateY(-50%);color:rgba(139,32,32,.4);font-size:12px;font-style:normal;}
-.forbidden-item::before{left:10px;}
-.forbidden-item::after{right:10px;}
+/* Timer */
+.timer-section{margin-bottom:20px;}
+.timer-bar-wrap{width:100%;height:10px;background:rgba(201,151,58,.15);border-radius:5px;overflow:hidden;margin-bottom:8px;}
+.timer-bar{height:100%;border-radius:5px;transition:width 1s linear,background .5s;background:var(--gold);}
+.timer-display{display:flex;justify-content:space-between;align-items:center;}
+.timer-num{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:var(--gold);line-height:1;transition:color .5s;}
+.timer-num.urgent{color:#ff6644;animation:urg .5s ease-in-out infinite alternate;}
+@keyframes urg{from{transform:scale(1)}to{transform:scale(1.06)}}
+.card-counter{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;color:rgba(201,151,58,.4);text-align:right;}
 
-.card-actions{display:flex;gap:12px;margin-top:20px;}
-.card-btn{flex:1;font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:14px;border:none;cursor:pointer;text-transform:uppercase;font-weight:700;transition:all .15s;box-shadow:4px 4px 0 rgba(0,0,0,.3);}
-.card-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,.3);}
+/* Current word preview (small, for conductor) */
+.conductor-preview{background:rgba(201,151,58,.06);border:1.5px solid rgba(201,151,58,.25);padding:18px 20px;margin-bottom:20px;text-align:center;}
+.preview-tag{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:3px;color:rgba(201,151,58,.4);text-transform:uppercase;margin-bottom:6px;display:block;}
+.preview-word{font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:var(--paper);font-weight:700;}
+.preview-forbidden{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px;}
+.pf-tag{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:1px;padding:3px 10px;background:rgba(139,32,32,.2);border:1px solid rgba(139,32,32,.35);color:rgba(232,180,180,.7);}
+
+/* Action buttons */
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+.act-btn{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:18px 8px;border:none;cursor:pointer;text-transform:uppercase;font-weight:700;transition:all .15s;box-shadow:4px 4px 0 rgba(0,0,0,.35);}
+.act-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,.35);}
 .btn-ok{background:var(--green);color:white;}
 .btn-skip{background:rgba(201,151,58,.2);color:var(--gold);border:1.5px solid rgba(201,151,58,.4);}
 .btn-taboo{background:var(--red);color:white;}
 
-.score-row{display:flex;gap:10px;margin-top:16px;}
-.score-box{flex:1;background:rgba(0,0,0,.35);border:1px solid rgba(201,151,58,.2);padding:10px;text-align:center;}
-.score-lbl{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;display:block;margin-bottom:3px;}
-.score-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);font-weight:700;}
+/* Projector button */
+.projector-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:10px 20px;border:1.5px solid rgba(201,151,58,.3);background:transparent;color:rgba(201,151,58,.6);cursor:pointer;text-transform:uppercase;transition:all .2s;display:flex;align-items:center;gap:8px;margin:0 auto;}
+.projector-btn:hover{border-color:var(--gold);color:var(--gold);}
 
-/* RESULT */
-.result-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:52px 36px;text-align:center;animation:fadeUp .5s ease both;}
-.result-icon{font-size:60px;display:block;margin-bottom:16px;}
-.result-title{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,44px);font-style:italic;color:var(--gold);margin-bottom:20px;}
+/* Result */
+.result-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:48px 36px;text-align:center;animation:fadeUp .5s ease both;}
+.result-title{font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,42px);font-style:italic;color:var(--gold);margin-bottom:20px;}
 .result-stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;}
-.res-stat{background:rgba(0,0,0,.35);border:1px solid rgba(201,151,58,.2);padding:16px 24px;text-align:center;}
+.res-stat{background:rgba(0,0,0,.35);border:1px solid rgba(201,151,58,.2);padding:14px 20px;text-align:center;}
 .res-lbl{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;display:block;margin-bottom:4px;}
-.res-val{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);font-weight:700;}
-.result-btn{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:3px;padding:13px 32px;background:var(--brown);color:var(--cream);border:none;cursor:pointer;text-transform:uppercase;margin:6px;transition:all .2s;box-shadow:4px 4px 0 rgba(0,0,0,.3);}
+.res-val{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);font-weight:700;}
+.result-btn{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:3px;padding:13px 28px;background:var(--brown);color:var(--cream);border:none;cursor:pointer;text-transform:uppercase;margin:6px;transition:all .2s;box-shadow:4px 4px 0 rgba(0,0,0,.3);}
 .result-btn:hover{background:var(--gold);color:var(--brown);}
 .result-btn.outline{background:transparent;border:1.5px solid rgba(201,151,58,.4);color:var(--gold);}
 .result-btn.outline:hover{background:rgba(201,151,58,.1);}
 
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);border:1.5px solid var(--gold);color:var(--gold);font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:12px 28px;text-transform:uppercase;z-index:600;white-space:nowrap;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .35s;opacity:0;}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-
 .cp{position:fixed;pointer-events:none;z-index:999;animation:cpFall linear forwards;border-radius:2px;}
 @keyframes cpFall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(105vh) rotate(720deg)}}
 
 @media(max-width:480px){
-  .setup-box,.result-box{padding:36px 20px;}
-  .card-actions{flex-direction:column;}
-  .taboo-card{padding:24px 18px;}
+  .setup-box,.result-box{padding:32px 18px;}
+  .actions{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -109,8 +117,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <header class="game-header">
   <a class="back-btn" href="../index.html">← Torna</a>
   <div class="hcenter">
-    <div class="hnum">Gioco IX di XI</div>
-    <div class="htitle">Taboo — Edizione Rana</div>
+    <div class="hnum">Gioco IX di XI — Schermo Conduttore</div>
+    <div class="htitle">🃏 Taboo — Edizione Rana</div>
   </div>
   <div style="width:80px"></div>
 </header>
@@ -120,18 +128,18 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
   <!-- SETUP -->
   <div class="screen" id="setupScreen">
     <div class="setup-box">
-      <div class="setup-eyebrow">✦ &nbsp; Senza dire le parole vietate &nbsp; ✦</div>
+      <div class="setup-eyebrow">✦ &nbsp; Schermo del Conduttore &nbsp; ✦</div>
       <div class="setup-title">Taboo</div>
       <div class="setup-sub">Edizione Laurea di Rana</div>
 
-      <div class="rules-box">
-        <div class="rules-title">Regole</div>
-        <ul class="rules-list">
-          <li>Fai indovinare la parola in cima senza dirla</li>
-          <li>Non puoi usare nessuna delle parole vietate sotto</li>
-          <li>Se usi una parola vietata → <strong>Taboo! Bevi 2 shot</strong></li>
-          <li>Se gli altri non indovinano → <strong>Bevi 1 shot</strong></li>
-          <li>Se indovinano → <strong>Punto per te, avanti!</strong></li>
+      <div class="how-it-works">
+        <div class="how-title">Come funziona</div>
+        <ul class="how-list">
+          <li>Apri il <strong>proiettore</strong> cliccando il bottone — si aprirà in una nuova finestra</li>
+          <li>Manda la finestra del proiettore sullo schermo grande</li>
+          <li>Tieni questo schermo per te — vedi la parola, le vietate e i pulsanti</li>
+          <li>Usa <strong>Indovinato / Salta / Taboo</strong> per avanzare</li>
+          <li>Il proiettore si aggiorna automaticamente ad ogni carta</li>
         </ul>
       </div>
 
@@ -140,58 +148,74 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
         <input class="setup-input" type="number" id="secInput" value="45" min="10" max="120" step="5" style="width:120px">
       </div>
 
-      <button class="start-btn" onclick="startGame()">✦ Inizia il Taboo ✦</button>
+      <div class="projector-notice">
+        <strong>📽️ Prima di iniziare:</strong> clicca "Apri Proiettore" qui sotto per aprire la finestra da proiettare. Trascinala sullo schermo del proiettore prima di premere Inizia.
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+        <button class="projector-btn" onclick="openProjector()">📽️ &nbsp; Apri Proiettore</button>
+        <button class="start-btn" onclick="startGame()">✦ Inizia il Taboo ✦</button>
+      </div>
     </div>
   </div>
 
   <!-- GAME -->
   <div class="screen hidden" id="gameScreen">
+
     <div class="game-top">
       <div>
-        <span class="player-tag">Carta</span>
-        <div class="player-turn" id="cardCount">1 / 30</div>
+        <span class="turn-tag">Carta</span>
+        <div class="turn-name" id="cardLabel">1 / 30</div>
       </div>
-      <div class="timer-num-top" id="timerNum">45</div>
+      <div class="score-row">
+        <div class="score-box"><span class="score-lbl">Punti</span><span class="score-val" id="pts">0</span></div>
+        <div class="score-box"><span class="score-lbl">Shot</span><span class="score-val" id="shots">0</span></div>
+        <div class="score-box"><span class="score-lbl">Taboo</span><span class="score-val" id="taboos">0</span></div>
+        <div class="score-box"><span class="score-lbl">Salta</span><span class="score-val" id="skips">0</span></div>
+      </div>
     </div>
 
-    <div class="timer-bar-wrap">
-      <div class="timer-bar" id="timerBar" style="width:100%"></div>
+    <div class="timer-section">
+      <div class="timer-bar-wrap">
+        <div class="timer-bar" id="timerBar"></div>
+      </div>
+      <div class="timer-display">
+        <div class="timer-num" id="timerNum">45</div>
+        <div class="card-counter" id="cardCounter">Carta 1 di 30</div>
+      </div>
     </div>
 
-    <div class="taboo-card" id="tabooCard">
-      <div class="card-label">Fai indovinare</div>
-      <div class="word-to-guess" id="mainWord">—</div>
-      <div class="forbidden-label">✕ &nbsp; Parole vietate &nbsp; ✕</div>
-      <ul class="forbidden-list" id="forbiddenList"></ul>
+    <!-- Conductor preview -->
+    <div class="conductor-preview">
+      <span class="preview-tag">👁 Solo tu vedi questo</span>
+      <div class="preview-word" id="previewWord">—</div>
+      <div class="preview-forbidden" id="previewForbidden"></div>
     </div>
 
-    <div class="card-actions">
-      <button class="card-btn btn-ok" onclick="cardResult('ok')">✓ Indovinato!</button>
-      <button class="card-btn btn-skip" onclick="cardResult('skip')">↷ Salta</button>
-      <button class="card-btn btn-taboo" onclick="cardResult('taboo')">✕ Taboo!</button>
+    <!-- Action buttons -->
+    <div class="actions">
+      <button class="act-btn btn-ok"    onclick="cardResult('ok')">✓ Indovinato</button>
+      <button class="act-btn btn-skip"  onclick="cardResult('skip')">↷ Salta</button>
+      <button class="act-btn btn-taboo" onclick="cardResult('taboo')">✕ Taboo!</button>
     </div>
 
-    <div class="score-row">
-      <div class="score-box"><span class="score-lbl">Punti</span><span class="score-val" id="pts">0</span></div>
-      <div class="score-box"><span class="score-lbl">Shot da bere</span><span class="score-val" id="shots">0</span></div>
-      <div class="score-box"><span class="score-lbl">Saltate</span><span class="score-val" id="skips">0</span></div>
-    </div>
+    <button class="projector-btn" onclick="openProjector()">📽️ &nbsp; Riapri Proiettore</button>
+
   </div>
 
   <!-- RESULT -->
   <div class="screen hidden" id="resultScreen">
     <div class="result-box">
-      <span class="result-icon">🃏</span>
+      <span style="font-size:56px;display:block;margin-bottom:16px;">🃏</span>
       <div class="result-title">Fine del Taboo!</div>
       <div class="result-stats">
-        <div class="res-stat"><span class="res-lbl">Parole indovinate</span><span class="res-val" id="rPts">0</span></div>
-        <div class="res-stat"><span class="res-lbl">Shot da bere</span><span class="res-val" id="rShots">0</span></div>
-        <div class="res-stat"><span class="res-lbl">Taboo commessi</span><span class="res-val" id="rTaboo">0</span></div>
+        <div class="res-stat"><span class="res-lbl">Indovinate</span><span class="res-val" id="rPts">0</span></div>
+        <div class="res-stat"><span class="res-lbl">Shot</span><span class="res-val" id="rShots">0</span></div>
+        <div class="res-stat"><span class="res-lbl">Taboo</span><span class="res-val" id="rTaboos">0</span></div>
+        <div class="res-stat"><span class="res-lbl">Saltate</span><span class="res-val" id="rSkips">0</span></div>
       </div>
-      <div style="margin-top:8px;">
-        <button class="result-btn" onclick="restartGame()">↺ &nbsp; Nuova partita</button>
-        <button class="result-btn outline" onclick="location.href='../index.html'">← &nbsp; Torna</button>
-      </div>
+      <button class="result-btn" onclick="restartGame()">↺ &nbsp; Nuova partita</button>
+      <button class="result-btn outline" onclick="location.href='../index.html'">← &nbsp; Torna</button>
     </div>
   </div>
 
@@ -200,6 +224,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <div class="toast" id="toast"></div>
 
 <script>
+/* ── CARDS ── */
 const CARDS = [
   { word:'Airdrop',      forbidden:['iPad','foto','screen','trasferire','file'] },
   { word:'Rana',         forbidden:['soprannome','piedi','freddi','Victoria','anfibio'] },
@@ -217,11 +242,8 @@ const CARDS = [
   { word:'Modena',       forbidden:['città','Emilia','Italia','Unimore','Ferrari'] },
   { word:'Patatona',     forbidden:['soprannome','Victoria','affettuoso','ragazza','nome'] },
   { word:'Marketing',    forbidden:['pubblicità','vendere','strategia','corso','mercato'] },
-  { word:'Laureasi',     forbidden:['festeggiare','traguardo','tesi','università','finale'] },
   { word:'iPad',         forbidden:['Apple','tablet','schermo','touch','tecnologia'] },
   { word:'Stilo',        forbidden:['penna','iPad','scrivere','Apple','digitale'] },
-  { word:'Catena',       forbidden:['collegarsi','link','serie','oggetto','metallo'] },
-  { word:'Lezioni',      forbidden:['università','professore','studiare','aula','corso'] },
   { word:'Sessione',     forbidden:['esame','università','stress','studiare','periodo'] },
   { word:'Pride',        forbidden:['Bruxelles','evento','sfilata','festa','colori'] },
   { word:'Annalisa',     forbidden:['amica','Trieste','nome','Erasmus','ragazza'] },
@@ -231,14 +253,36 @@ const CARDS = [
   { word:'Oracolo',      forbidden:['prevedere','futuro','magico','sfera','risposta'] },
   { word:'Asta',         forbidden:['vendita','offerta','prezzo','gara','comprare'] },
   { word:'Roulette',     forbidden:['casino','girare','scommessa','shot','fortuna'] },
+  { word:'Lezione',      forbidden:['università','professore','studiare','aula','ascoltare'] },
+  { word:'Belgique',     forbidden:['Belgio','paese','Europa','Bruxelles','francese'] },
+  { word:'Soprannome',   forbidden:['nome','chiamare','Rana','Victoria','nickname'] },
 ];
 
-let cardIdx=0, pts=0, shots=0, skips=0, taboos=0;
+let shuffled=[], cardIdx=0, pts=0, shots=0, skips=0, taboos=0;
 let timeLeft=45, totalSec=45, timerInterval=null;
-let shuffled=[];
+let projectorWin=null;
 
+/* ── PROJECTOR ── */
+function openProjector(){
+  if(projectorWin && !projectorWin.closed){
+    projectorWin.focus();
+    return;
+  }
+  projectorWin = window.open('taboo-proiettore.html','TabooProjector','width=1280,height=720');
+  // Wait for it to load then push current state
+  setTimeout(pushToProjector, 800);
+}
+
+function pushToProjector(card){
+  if(!projectorWin || projectorWin.closed) return;
+  try {
+    projectorWin.updateCard(card || (shuffled[cardIdx] || null), timeLeft, totalSec, pts, shots);
+  } catch(e){}
+}
+
+/* ── GAME ── */
 function startGame(){
-  totalSec = Math.max(10,parseInt(document.getElementById('secInput').value)||45);
+  totalSec = Math.max(10, parseInt(document.getElementById('secInput').value)||45);
   shuffled = CARDS.slice().sort(()=>Math.random()-.5);
   cardIdx=0; pts=0; shots=0; skips=0; taboos=0;
   document.getElementById('setupScreen').classList.add('hidden');
@@ -247,41 +291,44 @@ function startGame(){
   startTimer();
 }
 
+function showCard(){
+  if(cardIdx >= shuffled.length){ endGame(); return; }
+  const card = shuffled[cardIdx];
+
+  // update conductor view
+  document.getElementById('cardLabel').textContent = `${cardIdx+1} / ${shuffled.length}`;
+  document.getElementById('cardCounter').textContent = `Carta ${cardIdx+1} di ${shuffled.length}`;
+  document.getElementById('previewWord').textContent = card.word;
+  document.getElementById('previewForbidden').innerHTML = card.forbidden.map(w=>`<span class="pf-tag">${w}</span>`).join('');
+
+  // push to projector
+  pushToProjector(card);
+}
+
 function startTimer(){
-  timeLeft=totalSec;
+  timeLeft = totalSec;
   updateTimer();
   clearInterval(timerInterval);
-  timerInterval=setInterval(()=>{
+  timerInterval = setInterval(()=>{
     timeLeft--;
     updateTimer();
-    if(timeLeft<=0){
+    pushToProjector(shuffled[cardIdx]);
+    if(timeLeft <= 0){
       clearInterval(timerInterval);
       shots++;
-      document.getElementById('shots').textContent=shots;
+      document.getElementById('shots').textContent = shots;
       showToast('Tempo scaduto! +1 shot 🥂');
-      setTimeout(()=>{ nextCard(); startTimer(); },600);
+      setTimeout(()=>{ nextCard(); startTimer(); }, 600);
     }
-  },1000);
+  }, 1000);
 }
 
 function updateTimer(){
-  document.getElementById('timerNum').textContent=timeLeft;
-  const frac=timeLeft/totalSec;
-  document.getElementById('timerBar').style.width=(frac*100)+'%';
-  document.getElementById('timerBar').style.background=frac>.4?'var(--gold)':frac>.2?'#e07020':'#cc3322';
-  const el=document.getElementById('timerNum');
-  el.classList.toggle('urgent',timeLeft<=10);
-}
-
-function showCard(){
-  if(cardIdx>=shuffled.length){ endGame(); return; }
-  const card=shuffled[cardIdx];
-  document.getElementById('cardCount').textContent=`${cardIdx+1} / ${shuffled.length}`;
-  document.getElementById('mainWord').textContent=card.word;
-  const list=document.getElementById('forbiddenList');
-  list.innerHTML=card.forbidden.map(w=>`<li class="forbidden-item">${w}</li>`).join('');
-  const c=document.getElementById('tabooCard');
-  c.style.animation='none'; void c.offsetWidth; c.style.animation='cardIn .4s cubic-bezier(.16,1,.3,1) both';
+  const frac = timeLeft / totalSec;
+  document.getElementById('timerNum').textContent = timeLeft;
+  document.getElementById('timerBar').style.width = (frac*100)+'%';
+  document.getElementById('timerBar').style.background = frac>.4?'var(--gold)':frac>.2?'#e07020':'#cc3322';
+  document.getElementById('timerNum').classList.toggle('urgent', timeLeft<=10);
 }
 
 function nextCard(){ cardIdx++; showCard(); }
@@ -289,27 +336,35 @@ function nextCard(){ cardIdx++; showCard(); }
 function cardResult(type){
   clearInterval(timerInterval);
   if(type==='ok'){
-    pts++; document.getElementById('pts').textContent=pts;
-    showToast('Indovinato! +1 punto 🎉');
+    pts++;
+    document.getElementById('pts').textContent = pts;
+    showToast('✓ Indovinato! +1 punto');
     launchConfetti(20);
   } else if(type==='taboo'){
-    shots+=2; taboos++; document.getElementById('shots').textContent=shots;
-    showToast('TABOO! +2 shot 🥂🥂');
+    shots+=2; taboos++;
+    document.getElementById('shots').textContent = shots;
+    document.getElementById('taboos').textContent = taboos;
+    showToast('✕ TABOO! +2 shot 🥂🥂');
   } else {
-    skips++; document.getElementById('skips').textContent=skips;
-    showToast('Saltata →');
+    skips++;
+    document.getElementById('skips').textContent = skips;
+    showToast('↷ Saltata');
   }
-  setTimeout(()=>{ nextCard(); startTimer(); },400);
+  setTimeout(()=>{ nextCard(); startTimer(); }, 350);
 }
 
 function endGame(){
   clearInterval(timerInterval);
+  // tell projector game over
+  if(projectorWin && !projectorWin.closed){
+    try{ projectorWin.showEnd(pts, shots); }catch(e){}
+  }
   document.getElementById('gameScreen').classList.add('hidden');
   document.getElementById('resultScreen').classList.remove('hidden');
-  document.getElementById('rPts').textContent=pts;
-  document.getElementById('rShots').textContent=shots;
-  document.getElementById('rTaboo').textContent=taboos;
-  if(shots===0) launchConfetti(60);
+  document.getElementById('rPts').textContent   = pts;
+  document.getElementById('rShots').textContent  = shots;
+  document.getElementById('rTaboos').textContent = taboos;
+  document.getElementById('rSkips').textContent  = skips;
 }
 
 function restartGame(){
