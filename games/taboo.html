@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🃏 Taboo — Rana Laurea</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--dark:#0D0A07;--green:#2D5A3D;--paper:#E8E0CC;--paper2:#DED5BC;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--cream);font-family:'Courier Prime',monospace;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 30% 20%,rgba(201,151,58,.07) 0%,transparent 55%),radial-gradient(ellipse at 70% 80%,rgba(139,32,32,.05) 0%,transparent 55%);}
+
+.game-header{background:rgba(0,0,0,.65);border-bottom:2px solid var(--gold);padding:14px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+.back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.back-btn:hover{background:var(--gold);color:var(--brown);}
+.hcenter{flex:1;text-align:center;}
+.hnum{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;}
+.htitle{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--gold);}
+
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px 56px;position:relative;z-index:1;}
+.screen{width:100%;max-width:680px;}
+.hidden{display:none!important;}
+
+/* SETUP */
+.setup-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:52px 40px;text-align:center;animation:fadeUp .5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.setup-eyebrow{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:5px;color:rgba(201,151,58,.5);text-transform:uppercase;margin-bottom:12px;}
+.setup-title{font-family:'Playfair Display',serif;font-size:clamp(36px,7vw,64px);color:var(--gold);font-style:italic;line-height:1;margin-bottom:6px;}
+.setup-sub{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:4px;color:rgba(201,151,58,.45);text-transform:uppercase;margin-bottom:36px;}
+.rules-box{background:rgba(0,0,0,.3);border:1px solid rgba(201,151,58,.2);padding:20px 24px;margin-bottom:32px;text-align:left;}
+.rules-title{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
+.rules-list{list-style:none;}
+.rules-list li{font-size:13px;color:rgba(232,224,204,.75);line-height:1.7;padding:3px 0;}
+.rules-list li::before{content:'◆ ';color:var(--gold);}
+.field-wrap{text-align:left;width:100%;max-width:340px;margin:0 auto 20px;}
+.field-label{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.55);text-transform:uppercase;display:block;margin-bottom:7px;}
+.setup-input{width:100%;font-family:'Courier Prime',monospace;font-size:14px;padding:12px 16px;border:1.5px solid rgba(201,151,58,.3);background:rgba(201,151,58,.05);color:var(--cream);transition:border-color .2s;}
+.setup-input:focus{outline:none;border-color:var(--gold);}
+.start-btn{font-family:'Special Elite',cursive;font-size:14px;letter-spacing:4px;padding:16px 48px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;box-shadow:6px 6px 0 rgba(201,151,58,.15);transition:all .15s;position:relative;overflow:hidden;}
+.start-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.15) 50%,transparent 70%);transform:translateX(-100%);transition:transform .4s;}
+.start-btn:hover::before{transform:translateX(100%);}
+.start-btn:hover{transform:translate(2px,2px);box-shadow:4px 4px 0 rgba(201,151,58,.15);}
+
+/* GAME */
+.game-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.player-turn{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold-light);}
+.player-tag{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;display:block;margin-bottom:3px;}
+
+/* Timer bar */
+.timer-bar-wrap{width:100%;height:8px;background:rgba(201,151,58,.15);border-radius:4px;margin-bottom:24px;overflow:hidden;}
+.timer-bar{height:100%;background:var(--gold);border-radius:4px;transition:width 1s linear, background .5s;}
+.timer-num-top{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);font-weight:700;text-align:center;margin-bottom:12px;transition:color .5s;}
+.timer-num-top.urgent{color:#ff6644;animation:urg .5s ease-in-out infinite alternate;}
+@keyframes urg{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* Card */
+.taboo-card{background:var(--paper);border:3px solid var(--brown);padding:36px 28px;box-shadow:8px 8px 0 var(--gold),12px 12px 0 rgba(201,151,58,.15);position:relative;animation:cardIn .4s cubic-bezier(.16,1,.3,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.card-label{position:absolute;top:-13px;left:20px;background:var(--red);color:white;font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;padding:3px 14px;text-transform:uppercase;}
+.word-to-guess{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,48px);font-weight:700;color:var(--brown);text-align:center;margin-bottom:24px;line-height:1;}
+.forbidden-label{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:var(--red);text-transform:uppercase;text-align:center;margin-bottom:14px;}
+.forbidden-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.forbidden-item{background:rgba(139,32,32,.12);border:1px solid rgba(139,32,32,.35);padding:10px 16px;font-family:'Playfair Display',serif;font-size:17px;font-style:italic;color:var(--brown);text-align:center;position:relative;}
+.forbidden-item::before,.forbidden-item::after{content:'✕';position:absolute;top:50%;transform:translateY(-50%);color:rgba(139,32,32,.4);font-size:12px;font-style:normal;}
+.forbidden-item::before{left:10px;}
+.forbidden-item::after{right:10px;}
+
+.card-actions{display:flex;gap:12px;margin-top:20px;}
+.card-btn{flex:1;font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:14px;border:none;cursor:pointer;text-transform:uppercase;font-weight:700;transition:all .15s;box-shadow:4px 4px 0 rgba(0,0,0,.3);}
+.card-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,.3);}
+.btn-ok{background:var(--green);color:white;}
+.btn-skip{background:rgba(201,151,58,.2);color:var(--gold);border:1.5px solid rgba(201,151,58,.4);}
+.btn-taboo{background:var(--red);color:white;}
+
+.score-row{display:flex;gap:10px;margin-top:16px;}
+.score-box{flex:1;background:rgba(0,0,0,.35);border:1px solid rgba(201,151,58,.2);padding:10px;text-align:center;}
+.score-lbl{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;display:block;margin-bottom:3px;}
+.score-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);font-weight:700;}
+
+/* RESULT */
+.result-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:52px 36px;text-align:center;animation:fadeUp .5s ease both;}
+.result-icon{font-size:60px;display:block;margin-bottom:16px;}
+.result-title{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,44px);font-style:italic;color:var(--gold);margin-bottom:20px;}
+.result-stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;}
+.res-stat{background:rgba(0,0,0,.35);border:1px solid rgba(201,151,58,.2);padding:16px 24px;text-align:center;}
+.res-lbl{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;display:block;margin-bottom:4px;}
+.res-val{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);font-weight:700;}
+.result-btn{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:3px;padding:13px 32px;background:var(--brown);color:var(--cream);border:none;cursor:pointer;text-transform:uppercase;margin:6px;transition:all .2s;box-shadow:4px 4px 0 rgba(0,0,0,.3);}
+.result-btn:hover{background:var(--gold);color:var(--brown);}
+.result-btn.outline{background:transparent;border:1.5px solid rgba(201,151,58,.4);color:var(--gold);}
+.result-btn.outline:hover{background:rgba(201,151,58,.1);}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);border:1.5px solid var(--gold);color:var(--gold);font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:12px 28px;text-transform:uppercase;z-index:600;white-space:nowrap;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .35s;opacity:0;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+.cp{position:fixed;pointer-events:none;z-index:999;animation:cpFall linear forwards;border-radius:2px;}
+@keyframes cpFall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(105vh) rotate(720deg)}}
+
+@media(max-width:480px){
+  .setup-box,.result-box{padding:36px 20px;}
+  .card-actions{flex-direction:column;}
+  .taboo-card{padding:24px 18px;}
+}
+</style>
+</head>
+<body>
+
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div class="hcenter">
+    <div class="hnum">Gioco IX di XI</div>
+    <div class="htitle">Taboo — Edizione Rana</div>
+  </div>
+  <div style="width:80px"></div>
+</header>
+
+<main class="main">
+
+  <!-- SETUP -->
+  <div class="screen" id="setupScreen">
+    <div class="setup-box">
+      <div class="setup-eyebrow">✦ &nbsp; Senza dire le parole vietate &nbsp; ✦</div>
+      <div class="setup-title">Taboo</div>
+      <div class="setup-sub">Edizione Laurea di Rana</div>
+
+      <div class="rules-box">
+        <div class="rules-title">Regole</div>
+        <ul class="rules-list">
+          <li>Fai indovinare la parola in cima senza dirla</li>
+          <li>Non puoi usare nessuna delle parole vietate sotto</li>
+          <li>Se usi una parola vietata → <strong>Taboo! Bevi 2 shot</strong></li>
+          <li>Se gli altri non indovinano → <strong>Bevi 1 shot</strong></li>
+          <li>Se indovinano → <strong>Punto per te, avanti!</strong></li>
+        </ul>
+      </div>
+
+      <div class="field-wrap">
+        <span class="field-label">Secondi per carta</span>
+        <input class="setup-input" type="number" id="secInput" value="45" min="10" max="120" step="5" style="width:120px">
+      </div>
+
+      <button class="start-btn" onclick="startGame()">✦ Inizia il Taboo ✦</button>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div class="screen hidden" id="gameScreen">
+    <div class="game-top">
+      <div>
+        <span class="player-tag">Carta</span>
+        <div class="player-turn" id="cardCount">1 / 30</div>
+      </div>
+      <div class="timer-num-top" id="timerNum">45</div>
+    </div>
+
+    <div class="timer-bar-wrap">
+      <div class="timer-bar" id="timerBar" style="width:100%"></div>
+    </div>
+
+    <div class="taboo-card" id="tabooCard">
+      <div class="card-label">Fai indovinare</div>
+      <div class="word-to-guess" id="mainWord">—</div>
+      <div class="forbidden-label">✕ &nbsp; Parole vietate &nbsp; ✕</div>
+      <ul class="forbidden-list" id="forbiddenList"></ul>
+    </div>
+
+    <div class="card-actions">
+      <button class="card-btn btn-ok" onclick="cardResult('ok')">✓ Indovinato!</button>
+      <button class="card-btn btn-skip" onclick="cardResult('skip')">↷ Salta</button>
+      <button class="card-btn btn-taboo" onclick="cardResult('taboo')">✕ Taboo!</button>
+    </div>
+
+    <div class="score-row">
+      <div class="score-box"><span class="score-lbl">Punti</span><span class="score-val" id="pts">0</span></div>
+      <div class="score-box"><span class="score-lbl">Shot da bere</span><span class="score-val" id="shots">0</span></div>
+      <div class="score-box"><span class="score-lbl">Saltate</span><span class="score-val" id="skips">0</span></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen hidden" id="resultScreen">
+    <div class="result-box">
+      <span class="result-icon">🃏</span>
+      <div class="result-title">Fine del Taboo!</div>
+      <div class="result-stats">
+        <div class="res-stat"><span class="res-lbl">Parole indovinate</span><span class="res-val" id="rPts">0</span></div>
+        <div class="res-stat"><span class="res-lbl">Shot da bere</span><span class="res-val" id="rShots">0</span></div>
+        <div class="res-stat"><span class="res-lbl">Taboo commessi</span><span class="res-val" id="rTaboo">0</span></div>
+      </div>
+      <div style="margin-top:8px;">
+        <button class="result-btn" onclick="restartGame()">↺ &nbsp; Nuova partita</button>
+        <button class="result-btn outline" onclick="location.href='../index.html'">← &nbsp; Torna</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CARDS = [
+  { word:'Airdrop',      forbidden:['iPad','foto','screen','trasferire','file'] },
+  { word:'Rana',         forbidden:['soprannome','piedi','freddi','Victoria','anfibio'] },
+  { word:'Bruxelles',    forbidden:['Erasmus','Belgio','Europa','capitale','viaggio'] },
+  { word:'Diritto',      forbidden:['legge','esame','materia','odiava','commerciale'] },
+  { word:'Appunti',      forbidden:['scrivere','studiare','note','foglio','iPad'] },
+  { word:'Font',         forbidden:['scrittura','carattere','testo','Calibri','dimensione'] },
+  { word:'Erasmus',      forbidden:['estero','Bruxelles','università','scambio','viaggio'] },
+  { word:'Shot',         forbidden:['bere','alcolico','bicchiere','festa','drink'] },
+  { word:'Tipo',         forbidden:['parola','dire','Victoria','ripetere','esempio'] },
+  { word:'Laureanda',    forbidden:['laurea','università','studiare','titolo','Victoria'] },
+  { word:'Vino',         forbidden:['bere','rosso','bianco','bottiglia','uva'] },
+  { word:'Piedi freddi', forbidden:['temperatura','corpo','calze','inverno','Victoria'] },
+  { word:'Professore',   forbidden:['università','docente','lezione','voce','insegnante'] },
+  { word:'Modena',       forbidden:['città','Emilia','Italia','Unimore','Ferrari'] },
+  { word:'Patatona',     forbidden:['soprannome','Victoria','affettuoso','ragazza','nome'] },
+  { word:'Marketing',    forbidden:['pubblicità','vendere','strategia','corso','mercato'] },
+  { word:'Laureasi',     forbidden:['festeggiare','traguardo','tesi','università','finale'] },
+  { word:'iPad',         forbidden:['Apple','tablet','schermo','touch','tecnologia'] },
+  { word:'Stilo',        forbidden:['penna','iPad','scrivere','Apple','digitale'] },
+  { word:'Catena',       forbidden:['collegarsi','link','serie','oggetto','metallo'] },
+  { word:'Lezioni',      forbidden:['università','professore','studiare','aula','corso'] },
+  { word:'Sessione',     forbidden:['esame','università','stress','studiare','periodo'] },
+  { word:'Pride',        forbidden:['Bruxelles','evento','sfilata','festa','colori'] },
+  { word:'Annalisa',     forbidden:['amica','Trieste','nome','Erasmus','ragazza'] },
+  { word:'Carlotta',     forbidden:['amica','Trieste','nome','Erasmus','ragazza'] },
+  { word:'Economia',     forbidden:['soldi','mercato','corso','università','finanza'] },
+  { word:'Tesi',         forbidden:['laurea','scrivere','argomento','università','finale'] },
+  { word:'Oracolo',      forbidden:['prevedere','futuro','magico','sfera','risposta'] },
+  { word:'Asta',         forbidden:['vendita','offerta','prezzo','gara','comprare'] },
+  { word:'Roulette',     forbidden:['casino','girare','scommessa','shot','fortuna'] },
+];
+
+let cardIdx=0, pts=0, shots=0, skips=0, taboos=0;
+let timeLeft=45, totalSec=45, timerInterval=null;
+let shuffled=[];
+
+function startGame(){
+  totalSec = Math.max(10,parseInt(document.getElementById('secInput').value)||45);
+  shuffled = CARDS.slice().sort(()=>Math.random()-.5);
+  cardIdx=0; pts=0; shots=0; skips=0; taboos=0;
+  document.getElementById('setupScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
+  showCard();
+  startTimer();
+}
+
+function startTimer(){
+  timeLeft=totalSec;
+  updateTimer();
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    updateTimer();
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      shots++;
+      document.getElementById('shots').textContent=shots;
+      showToast('Tempo scaduto! +1 shot 🥂');
+      setTimeout(()=>{ nextCard(); startTimer(); },600);
+    }
+  },1000);
+}
+
+function updateTimer(){
+  document.getElementById('timerNum').textContent=timeLeft;
+  const frac=timeLeft/totalSec;
+  document.getElementById('timerBar').style.width=(frac*100)+'%';
+  document.getElementById('timerBar').style.background=frac>.4?'var(--gold)':frac>.2?'#e07020':'#cc3322';
+  const el=document.getElementById('timerNum');
+  el.classList.toggle('urgent',timeLeft<=10);
+}
+
+function showCard(){
+  if(cardIdx>=shuffled.length){ endGame(); return; }
+  const card=shuffled[cardIdx];
+  document.getElementById('cardCount').textContent=`${cardIdx+1} / ${shuffled.length}`;
+  document.getElementById('mainWord').textContent=card.word;
+  const list=document.getElementById('forbiddenList');
+  list.innerHTML=card.forbidden.map(w=>`<li class="forbidden-item">${w}</li>`).join('');
+  const c=document.getElementById('tabooCard');
+  c.style.animation='none'; void c.offsetWidth; c.style.animation='cardIn .4s cubic-bezier(.16,1,.3,1) both';
+}
+
+function nextCard(){ cardIdx++; showCard(); }
+
+function cardResult(type){
+  clearInterval(timerInterval);
+  if(type==='ok'){
+    pts++; document.getElementById('pts').textContent=pts;
+    showToast('Indovinato! +1 punto 🎉');
+    launchConfetti(20);
+  } else if(type==='taboo'){
+    shots+=2; taboos++; document.getElementById('shots').textContent=shots;
+    showToast('TABOO! +2 shot 🥂🥂');
+  } else {
+    skips++; document.getElementById('skips').textContent=skips;
+    showToast('Saltata →');
+  }
+  setTimeout(()=>{ nextCard(); startTimer(); },400);
+}
+
+function endGame(){
+  clearInterval(timerInterval);
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('rPts').textContent=pts;
+  document.getElementById('rShots').textContent=shots;
+  document.getElementById('rTaboo').textContent=taboos;
+  if(shots===0) launchConfetti(60);
+}
+
+function restartGame(){
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('setupScreen').classList.remove('hidden');
+}
+
+let toastT;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function launchConfetti(n){
+  const colors=['#C9973A','#E8C97A','#8B2020','#2D5A3D','#F5F0E8'];
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div'); el.className='cp';
+      const s=5+Math.random()*8;
+      el.style.cssText=`left:${Math.random()*100}vw;top:-8px;width:${s}px;height:${s}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>.4?'50%':'2px'};animation-duration:${1.3+Math.random()*2}s;`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),3500);
+    },i*20);
+  }
+}
+</script>
+</body>
+</html>
