@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🃏 Taboo — Proiettore</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--dark:#0A0704;--green:#2D5A3D;--paper:#E8E0CC;}
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  background: var(--dark);
+  color: var(--cream);
+  font-family: 'Courier Prime', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(201,151,58,.08) 0%, transparent 60%),
+    repeating-linear-gradient(45deg, rgba(201,151,58,.015) 0, rgba(201,151,58,.015) 1px, transparent 1px, transparent 60px);
+}
+
+/* ── WAITING SCREEN ── */
+.waiting {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  position:relative; z-index:1; text-align:center; padding:40px;
+}
+.waiting-frog { font-size:120px; animation:floatFrog 3s ease-in-out infinite; margin-bottom:32px; }
+@keyframes floatFrog {
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-20px)}
+}
+.waiting-title {
+  font-family:'Playfair Display',serif; font-size:clamp(32px,5vw,64px);
+  font-style:italic; color:var(--gold); margin-bottom:12px;
+  text-shadow:0 0 40px rgba(201,151,58,.3);
+}
+.waiting-sub {
+  font-family:'Special Elite',cursive; font-size:clamp(12px,1.8vw,18px);
+  letter-spacing:5px; color:rgba(201,151,58,.45); text-transform:uppercase;
+}
+
+/* ── GAME SCREEN ── */
+.game-screen {
+  display:none; flex:1; flex-direction:column;
+  position:relative; z-index:1;
+}
+
+/* Top bar */
+.top-bar {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px 40px;
+  background:rgba(0,0,0,.5);
+  border-bottom:2px solid rgba(201,151,58,.25);
+}
+.tb-item { text-align:center; }
+.tb-label {
+  font-family:'Special Elite',cursive; font-size:clamp(9px,1.2vw,12px);
+  letter-spacing:3px; color:rgba(201,151,58,.4); text-transform:uppercase;
+  display:block; margin-bottom:4px;
+}
+.tb-val {
+  font-family:'Playfair Display',serif; font-size:clamp(22px,3vw,36px);
+  color:var(--gold); font-weight:700;
+}
+.tb-timer {
+  font-family:'Playfair Display',serif; font-size:clamp(36px,6vw,72px);
+  color:var(--gold-light); font-weight:700; line-height:1;
+  transition:color .5s;
+}
+.tb-timer.urgent { color:#ff6644; animation:urg .5s ease-in-out infinite alternate; }
+@keyframes urg{from{transform:scale(1)}to{transform:scale(1.06)}}
+
+/* Timer bar */
+.timer-bar-wrap {
+  height:8px; background:rgba(201,151,58,.12);
+}
+.timer-bar {
+  height:100%; background:var(--gold);
+  transition:width 1s linear, background .5s;
+}
+
+/* Card area */
+.card-area {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  padding:32px 60px;
+}
+
+.taboo-card {
+  background: var(--paper);
+  border: 6px solid var(--brown);
+  box-shadow: 12px 12px 0 var(--gold), 18px 18px 0 rgba(201,151,58,.2);
+  padding: 52px 56px;
+  width: 100%; max-width: 860px;
+  text-align: center;
+  position: relative;
+  animation: cardIn .45s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes cardIn {
+  from{opacity:0;transform:scale(.94) translateY(24px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+.card-badge {
+  position:absolute; top:-22px; left:50%; transform:translateX(-50%);
+  background:var(--red); color:white;
+  font-family:'Special Elite',cursive; font-size:clamp(11px,1.5vw,15px);
+  letter-spacing:4px; padding:6px 28px; text-transform:uppercase; white-space:nowrap;
+}
+
+.main-word {
+  font-family:'Playfair Display',serif;
+  font-size: clamp(52px,9vw,110px);
+  font-weight:700; color:var(--brown);
+  line-height:1; margin-bottom:32px;
+  text-shadow: 2px 2px 0 rgba(61,43,31,.2);
+}
+
+.divider {
+  width:80px; height:3px; background:var(--red);
+  margin:0 auto 24px;
+}
+
+.forbidden-label {
+  font-family:'Special Elite',cursive; font-size:clamp(11px,1.5vw,15px);
+  letter-spacing:4px; color:var(--red); text-transform:uppercase; margin-bottom:20px;
+}
+
+.forbidden-list {
+  list-style:none;
+  display:flex; flex-direction:column; gap:10px;
+}
+.forbidden-item {
+  background:rgba(139,32,32,.1);
+  border:2px solid rgba(139,32,32,.3);
+  padding:12px 20px;
+  font-family:'Playfair Display',serif;
+  font-size:clamp(20px,3vw,34px);
+  font-style:italic; color:var(--brown);
+  position:relative;
+}
+.forbidden-item::before,
+.forbidden-item::after {
+  content:'✕'; position:absolute; top:50%; transform:translateY(-50%);
+  color:rgba(139,32,32,.35); font-size:clamp(12px,1.5vw,16px); font-style:normal;
+}
+.forbidden-item::before{left:14px;}
+.forbidden-item::after{right:14px;}
+
+/* Bottom ornament */
+.card-foot {
+  padding:14px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  border-top:1px solid rgba(201,151,58,.15);
+}
+.foot-text {
+  font-family:'Special Elite',cursive; font-size:clamp(9px,1.2vw,12px);
+  letter-spacing:3px; color:rgba(201,151,58,.3); text-transform:uppercase;
+}
+
+/* ── END SCREEN ── */
+.end-screen {
+  display:none; flex:1; flex-direction:column;
+  align-items:center; justify-content:center;
+  position:relative; z-index:1; text-align:center; padding:40px;
+}
+.end-title {
+  font-family:'Playfair Display',serif; font-size:clamp(40px,7vw,80px);
+  font-style:italic; color:var(--gold); margin-bottom:24px;
+  text-shadow:0 0 40px rgba(201,151,58,.4);
+}
+.end-stats {
+  display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin-bottom:32px;
+}
+.end-stat {
+  background:rgba(201,151,58,.06); border:2px solid rgba(201,151,58,.25);
+  padding:24px 36px; text-align:center;
+}
+.end-stat-label {
+  font-family:'Special Elite',cursive; font-size:clamp(10px,1.3vw,13px);
+  letter-spacing:3px; color:rgba(201,151,58,.5); text-transform:uppercase;
+  display:block; margin-bottom:8px;
+}
+.end-stat-val {
+  font-family:'Playfair Display',serif; font-size:clamp(40px,6vw,72px);
+  color:var(--gold); font-weight:700;
+}
+.end-frog { font-size:80px; margin-top:16px; animation:floatFrog 2s ease-in-out infinite; }
+
+/* ── FLASH OVERLAY ── */
+.flash {
+  position:fixed; inset:0; z-index:500; pointer-events:none;
+  opacity:0; transition:opacity .15s;
+}
+.flash.ok    { background:rgba(45,90,61,.4); }
+.flash.taboo { background:rgba(139,32,32,.5); }
+.flash.show  { opacity:1; }
+</style>
+</head>
+<body>
+
+<!-- WAITING -->
+<div class="waiting" id="waitingScreen">
+  <div class="waiting-frog">🐸</div>
+  <div class="waiting-title">Taboo — Edizione Rana</div>
+  <div class="waiting-sub">In attesa che il conduttore inizi…</div>
+</div>
+
+<!-- GAME -->
+<div class="game-screen" id="gameScreen">
+  <div class="top-bar">
+    <div class="tb-item">
+      <span class="tb-label">Punti</span>
+      <span class="tb-val" id="pjPts">0</span>
+    </div>
+    <div class="tb-item">
+      <div class="tb-timer" id="pjTimer">—</div>
+    </div>
+    <div class="tb-item">
+      <span class="tb-label">Shot</span>
+      <span class="tb-val" id="pjShots">0</span>
+    </div>
+  </div>
+
+  <div class="timer-bar-wrap">
+    <div class="timer-bar" id="pjTimerBar" style="width:100%"></div>
+  </div>
+
+  <div class="card-area">
+    <div class="taboo-card" id="pjCard">
+      <div class="card-badge">Fai indovinare questa parola</div>
+      <div class="main-word" id="pjWord">—</div>
+      <div class="divider"></div>
+      <div class="forbidden-label">✕ &nbsp; Parole vietate &nbsp; ✕</div>
+      <ul class="forbidden-list" id="pjForbidden"></ul>
+    </div>
+  </div>
+
+  <div class="card-foot">
+    <span class="foot-text">Laurea di Victoria "Rana" Rozhko — 2025</span>
+    <span class="foot-text" id="pjCardCount">Carta 1</span>
+    <span class="foot-text">Taboo — Edizione Rana</span>
+  </div>
+</div>
+
+<!-- END -->
+<div class="end-screen" id="endScreen">
+  <div class="end-title">Fine del Taboo!</div>
+  <div class="end-stats">
+    <div class="end-stat">
+      <span class="end-stat-label">Parole indovinate</span>
+      <span class="end-stat-val" id="endPts">0</span>
+    </div>
+    <div class="end-stat">
+      <span class="end-stat-label">Shot da bere</span>
+      <span class="end-stat-val" id="endShots">0</span>
+    </div>
+  </div>
+  <div class="end-frog">🎓</div>
+</div>
+
+<!-- FLASH -->
+<div class="flash" id="flash"></div>
+
+<script>
+let cardCount = 0;
+
+/* Called by controller window */
+window.updateCard = function(card, timeLeft, totalSec, pts, shots) {
+  if(!card){ return; }
+
+  // Show game screen
+  document.getElementById('waitingScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display    = 'flex';
+  document.getElementById('endScreen').style.display     = 'none';
+
+  // Update word
+  const wordEl = document.getElementById('pjWord');
+  if(wordEl.textContent !== card.word){
+    cardCount++;
+    // Animate new card
+    const cardEl = document.getElementById('pjCard');
+    cardEl.style.animation = 'none';
+    void cardEl.offsetWidth;
+    cardEl.style.animation = 'cardIn .45s cubic-bezier(.16,1,.3,1) both';
+    wordEl.textContent = card.word;
+    document.getElementById('pjForbidden').innerHTML =
+      card.forbidden.map(w=>`<li class="forbidden-item">${w}</li>`).join('');
+    document.getElementById('pjCardCount').textContent = `Carta ${cardCount}`;
+  }
+
+  // Update timer
+  document.getElementById('pjTimer').textContent = timeLeft;
+  document.getElementById('pjTimer').classList.toggle('urgent', timeLeft <= 10);
+  const frac = timeLeft / totalSec;
+  const bar = document.getElementById('pjTimerBar');
+  bar.style.width = (frac*100) + '%';
+  bar.style.background = frac>.4?'#C9973A':frac>.2?'#e07020':'#cc3322';
+
+  // Update scores
+  document.getElementById('pjPts').textContent   = pts;
+  document.getElementById('pjShots').textContent = shots;
+};
+
+window.showEnd = function(pts, shots) {
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display  = 'flex';
+  document.getElementById('endPts').textContent    = pts;
+  document.getElementById('endShots').textContent  = shots;
+};
+
+window.flashScreen = function(type) {
+  const f = document.getElementById('flash');
+  f.className = 'flash ' + type;
+  void f.offsetWidth;
+  f.classList.add('show');
+  setTimeout(()=>f.classList.remove('show'), 300);
+};
+</script>
+</body>
+</html>
