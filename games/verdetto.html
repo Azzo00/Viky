@@ -50,17 +50,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .sentence-num{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(61,43,31,.5);text-transform:uppercase;margin-bottom:12px;}
 .sentence-text{font-family:'Playfair Display',serif;font-size:clamp(17px,3.5vw,24px);font-style:italic;color:var(--brown);line-height:1.45;}
 
-/* Vote buttons */
-.vote-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
-.vote-btn{font-family:'Playfair Display',serif;font-size:clamp(16px,3vw,22px);font-style:italic;padding:28px 16px;border:2px solid rgba(201,151,58,.3);background:rgba(201,151,58,.06);color:var(--cream);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;text-align:center;}
-.vote-btn span{position:relative;z-index:1;}
-.vote-btn::before{content:'';position:absolute;inset:0;transform:scaleY(0);transform-origin:bottom;transition:transform .25s ease;z-index:0;}
-.vote-btn.vero::before{background:var(--green);}
-.vote-btn.falso::before{background:var(--red);}
-.vote-btn:hover::before{transform:scaleY(1);}
-.vote-btn:hover{border-color:var(--gold);color:white;}
-.vote-icon{font-size:24px;display:block;margin-bottom:8px;}
-
 /* Tally screen */
 .tally-box{background:rgba(0,0,0,.4);border:2px solid rgba(201,151,58,.25);padding:28px;margin-bottom:20px;text-align:center;}
 .tally-title{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
@@ -72,14 +61,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .tally-lbl{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:rgba(201,151,58,.45);text-transform:uppercase;margin-top:4px;}
 .tally-vs{font-family:'Playfair Display',serif;font-size:28px;color:rgba(201,151,58,.3);align-self:center;font-style:italic;}
 
-.victoria-answer{background:var(--paper2);border:2px solid var(--brown);padding:20px;text-align:center;margin-bottom:20px;}
-.va-label{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:8px;display:block;}
-.va-btns{display:flex;gap:10px;justify-content:center;}
-.va-btn{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:10px 24px;border:1.5px solid;cursor:pointer;text-transform:uppercase;transition:all .2s;}
-.va-btn.vero{border-color:var(--green);background:transparent;color:var(--green);}
-.va-btn.vero:hover,.va-btn.vero.selected{background:var(--green);color:white;}
-.va-btn.falso{border-color:var(--red);background:transparent;color:var(--red);}
-.va-btn.falso:hover,.va-btn.falso.selected{background:var(--red);color:white;}
+.victoria-status{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;color:rgba(201,151,58,.6);text-transform:uppercase;text-align:center;margin-top:16px;}
+
+.share-box{background:rgba(0,0,0,.3);border:1px solid rgba(201,151,58,.2);padding:16px 20px;margin-bottom:28px;text-align:left;}
+.share-title{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
+.share-row{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin-bottom:6px;}
+.share-lbl{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:rgba(201,151,58,.5);min-width:70px;}
+.share-url{font-size:12px;color:rgba(232,224,204,.8);word-break:break-all;}
+
+.action-btn:disabled{opacity:.4;cursor:not-allowed;}
+.action-btn:disabled:hover{transform:none;box-shadow:4px 4px 0 rgba(201,151,58,.15);}
 
 /* Result */
 .round-result{background:rgba(0,0,0,.35);border:1px solid rgba(201,151,58,.2);padding:18px 20px;text-align:center;margin-bottom:16px;animation:cardIn .4s cubic-bezier(.16,1,.3,1) both;}
@@ -131,18 +122,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
       <div class="rules-box">
         <div class="rules-title">Come si gioca</div>
         <ul class="rules-list">
-          <li>Viene letta una sentenza su Victoria</li>
-          <li>Tutti votano <strong>VERO</strong> o <strong>FALSO</strong></li>
-          <li>Victoria rivela la risposta vera</li>
+          <li>Viene mostrata una sentenza su Victoria</li>
+          <li>I giocatori votano <strong>VERO</strong> o <strong>FALSO</strong> dal proprio telefono</li>
+          <li>Victoria conferma la verità dalla sua pagina dedicata</li>
           <li>Chi è in <strong>minoranza</strong> beve</li>
           <li>Se è parità → tutti bevono 1 shot</li>
         </ul>
+      </div>
+      <div class="share-box">
+        <div class="share-title">📱 Condividi questi link prima di iniziare</div>
+        <div class="share-row"><span class="share-lbl">Giocatori</span><span class="share-url" id="urlGiocatori">—</span></div>
+        <div class="share-row"><span class="share-lbl">Victoria</span><span class="share-url" id="urlVictoria">—</span></div>
       </div>
       <button class="start-btn" onclick="startGame()">✦ Inizia il Processo ✦</button>
     </div>
   </div>
 
-  <!-- VOTING PHASE -->
+  <!-- VOTING + LIVE TALLY PHASE -->
   <div class="screen hidden" id="votingScreen">
     <div class="verdict-header">
       <div>
@@ -157,58 +153,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
       <div class="sentence-text" id="sText">—</div>
     </div>
 
-    <p style="font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;color:rgba(201,151,58,.4);text-transform:uppercase;text-align:center;margin-bottom:12px;">Ogni giocatore vota sul proprio telefono / a mano alzata</p>
-
-    <div class="vote-row">
-      <button class="vote-btn vero" onclick="goToTally('vero')">
-        <span><span class="vote-icon">✅</span>VERO</span>
-      </button>
-      <button class="vote-btn falso" onclick="goToTally('falso')">
-        <span><span class="vote-icon">❌</span>FALSO</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- TALLY PHASE -->
-  <div class="screen hidden" id="tallyScreen">
     <div class="tally-box">
-      <div class="tally-title">Conteggio Voti</div>
-      <div class="sentence-card" style="margin-bottom:16px;box-shadow:none;">
-        <div class="sentence-text" id="tSentence">—</div>
-      </div>
-
-      <p style="font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:rgba(201,151,58,.5);text-transform:uppercase;text-align:center;margin-bottom:12px;">Quante persone hanno votato VERO / FALSO?</p>
-
+      <div class="tally-title">Voti in arrivo dal vivo</div>
       <div class="tally-row">
         <div class="tally-side">
           <div class="tally-num vero-col" id="veroCount">0</div>
           <div class="tally-lbl">✅ Vero</div>
-          <div style="display:flex;gap:6px;justify-content:center;margin-top:10px;">
-            <button onclick="adjustCount('vero',-1)" style="font-size:18px;background:none;border:1px solid rgba(45,90,61,.4);color:var(--green);width:32px;height:32px;cursor:pointer;">−</button>
-            <button onclick="adjustCount('vero',1)"  style="font-size:18px;background:none;border:1px solid rgba(45,90,61,.4);color:var(--green);width:32px;height:32px;cursor:pointer;">+</button>
-          </div>
         </div>
         <div class="tally-vs">vs</div>
         <div class="tally-side">
           <div class="tally-num falso-col" id="falsoCount">0</div>
           <div class="tally-lbl">❌ Falso</div>
-          <div style="display:flex;gap:6px;justify-content:center;margin-top:10px;">
-            <button onclick="adjustCount('falso',-1)" style="font-size:18px;background:none;border:1px solid rgba(139,32,32,.4);color:var(--red);width:32px;height:32px;cursor:pointer;">−</button>
-            <button onclick="adjustCount('falso',1)"  style="font-size:18px;background:none;border:1px solid rgba(139,32,32,.4);color:var(--red);width:32px;height:32px;cursor:pointer;">+</button>
-          </div>
         </div>
       </div>
+      <div class="victoria-status" id="victoriaStatus">⏳ In attesa della risposta di Victoria...</div>
     </div>
 
-    <div class="victoria-answer">
-      <span class="va-label">🐸 Victoria — qual è la risposta vera?</span>
-      <div class="va-btns">
-        <button class="va-btn vero" id="vaVero" onclick="victoriaAnswer('vero')">✅ VERO</button>
-        <button class="va-btn falso" id="vaFalso" onclick="victoriaAnswer('falso')">❌ FALSO</button>
-      </div>
-    </div>
-
-    <button class="action-btn" onclick="revealVerdict()">⚖️ Rivela il Verdetto</button>
+    <button class="action-btn" id="revealBtn" onclick="revealVerdict()" disabled>⚖️ Rivela il Verdetto</button>
   </div>
 
   <!-- RESULT PHASE -->
@@ -233,7 +194,25 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 
 <div class="toast" id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD-6qxY--ANgVXhV8_kz1-ZE05uOcOuUv4",
+  authDomain: "verdetto-rana.firebaseapp.com",
+  databaseURL: "https://verdetto-rana-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "verdetto-rana",
+  storageBucket: "verdetto-rana.firebasestorage.app",
+  messagingSenderId: "642373729546",
+  appId: "1:642373729546:web:aff92a32635f77bf6a4ef3"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const ROOT = 'verdetto';
+
+document.getElementById('urlGiocatori').textContent = new URL('verdetto-giocatori.html', location.href).href;
+document.getElementById('urlVictoria').textContent = new URL('verdetto-victoria.html', location.href).href;
+
 const SENTENCES = [
   "Victoria ha usato la parola 'tipo' più di 50 volte in una singola conversazione",
   "Victoria ha mai mandato più di 10 Airdrop in un'ora solo per gli appunti",
@@ -258,90 +237,99 @@ const SENTENCES = [
 ];
 
 let shuffled=[], sentenceIdx=0, totalShots=0;
-let veroVotes=0, falsoVotes=0, victoriaVote=null;
+let liveVotes={}, victoriaAnswer=null;
+
+db.ref(`${ROOT}/votes`).on('value', snap=>{
+  liveVotes = snap.val() || {};
+  renderTally();
+});
+db.ref(`${ROOT}/state/victoriaAnswer`).on('value', snap=>{
+  victoriaAnswer = snap.val();
+  renderVictoriaStatus();
+});
+
+function tallyCounts(){
+  let vero=0, falso=0;
+  Object.values(liveVotes).forEach(v=>{ if(v==='vero') vero++; else if(v==='falso') falso++; });
+  return {vero, falso};
+}
+
+function renderTally(){
+  const {vero, falso} = tallyCounts();
+  document.getElementById('veroCount').textContent = vero;
+  document.getElementById('falsoCount').textContent = falso;
+}
+
+function renderVictoriaStatus(){
+  document.getElementById('victoriaStatus').textContent = victoriaAnswer
+    ? '✅ Victoria ha risposto — puoi rivelare quando vuoi'
+    : '⏳ In attesa della risposta di Victoria...';
+  document.getElementById('revealBtn').disabled = !victoriaAnswer;
+}
 
 function startGame(){
   shuffled=SENTENCES.slice().sort(()=>Math.random()-.5);
   sentenceIdx=0; totalShots=0;
   document.getElementById('setupScreen').classList.add('hidden');
-  showVoting();
+  pushRound();
 }
 
-function showVoting(){
+function pushRound(){
   if(sentenceIdx>=shuffled.length){ endGame(); return; }
-  veroVotes=0; falsoVotes=0; victoriaVote=null;
 
-  document.getElementById('votingScreen').classList.remove('hidden');
-  document.getElementById('tallyScreen').classList.add('hidden');
   document.getElementById('resultScreen').classList.add('hidden');
-
+  document.getElementById('votingScreen').classList.remove('hidden');
   document.getElementById('sentenceCount').textContent=`${sentenceIdx+1} / ${shuffled.length}`;
   document.getElementById('sNum').textContent=`N° ${String(sentenceIdx+1).padStart(3,'0')}`;
   document.getElementById('sText').textContent=`"${shuffled[sentenceIdx]}"`;
   document.getElementById('scoreInfo').textContent=`Shot totali: ${totalShots}`;
-}
 
-function goToTally(){
-  document.getElementById('votingScreen').classList.add('hidden');
-  document.getElementById('tallyScreen').classList.remove('hidden');
-  document.getElementById('tSentence').textContent=`"${shuffled[sentenceIdx]}"`;
-  document.getElementById('veroCount').textContent='0';
-  document.getElementById('falsoCount').textContent='0';
-  veroVotes=0; falsoVotes=0; victoriaVote=null;
-  document.getElementById('vaVero').classList.remove('selected');
-  document.getElementById('vaFalso').classList.remove('selected');
-}
-
-function adjustCount(side, delta){
-  if(side==='vero'){
-    veroVotes=Math.max(0,veroVotes+delta);
-    document.getElementById('veroCount').textContent=veroVotes;
-  } else {
-    falsoVotes=Math.max(0,falsoVotes+delta);
-    document.getElementById('falsoCount').textContent=falsoVotes;
-  }
-}
-
-function victoriaAnswer(ans){
-  victoriaVote=ans;
-  document.getElementById('vaVero').classList.toggle('selected',ans==='vero');
-  document.getElementById('vaFalso').classList.toggle('selected',ans==='falso');
+  db.ref(`${ROOT}/votes`).set(null);
+  db.ref(`${ROOT}/state`).set({
+    index: sentenceIdx,
+    sentence: shuffled[sentenceIdx],
+    phase: 'voting',
+    victoriaAnswer: null,
+    totalShots,
+    lastShots: 0
+  });
 }
 
 function revealVerdict(){
-  if(!victoriaVote){ showToast('Victoria deve rispondere prima!'); return; }
-  if(veroVotes+falsoVotes===0){ showToast('Inserisci almeno un voto!'); return; }
+  const {vero, falso} = tallyCounts();
+  if(!victoriaAnswer){ showToast('Victoria deve rispondere prima!'); return; }
+  if(vero+falso===0){ showToast('Nessun voto ricevuto!'); return; }
 
-  document.getElementById('tallyScreen').classList.add('hidden');
+  document.getElementById('votingScreen').classList.add('hidden');
   document.getElementById('resultScreen').classList.remove('hidden');
   document.getElementById('rSentenceCount').textContent=`${sentenceIdx+1} / ${shuffled.length}`;
   document.getElementById('rSentence').textContent=`"${shuffled[sentenceIdx]}"`;
 
-  const minority = victoriaVote==='vero' ? falsoVotes : veroVotes;
-  const majority = victoriaVote==='vero' ? veroVotes : falsoVotes;
-  const isParity = veroVotes===falsoVotes;
+  const minority = victoriaAnswer==='vero' ? falso : vero;
+  const majority = victoriaAnswer==='vero' ? vero : falso;
+  const isParity = vero===falso;
 
   let shots=0, resultHTML='';
 
   if(isParity){
-    shots = Math.max(1, Math.round((veroVotes+falsoVotes)/2));
+    shots = Math.max(1, Math.round((vero+falso)/2));
     totalShots+=shots;
     resultHTML=`
       <div class="rr-title" style="color:var(--gold)">⚖️ Parità!</div>
       <div class="rr-shots">${shots} 🥂 tutti</div>
-      <div class="rr-detail">Parità esatta — tutti bevono ${shots} shot.<br>Victoria aveva detto: <strong>${victoriaVote.toUpperCase()}</strong></div>
+      <div class="rr-detail">Parità esatta — tutti bevono ${shots} shot.<br>Victoria aveva detto: <strong>${victoriaAnswer.toUpperCase()}</strong></div>
     `;
   } else {
     shots=minority;
     totalShots+=shots;
-    const loserSide=victoriaVote==='vero'?'FALSO':'VERO';
+    const loserSide=victoriaAnswer==='vero'?'FALSO':'VERO';
     resultHTML=`
       <div class="rr-title" style="color:${loserSide==='FALSO'?'var(--red)':'var(--green)'}">
         Chi ha votato ${loserSide} — bevete!
       </div>
       <div class="rr-shots">${shots} 🥂</div>
       <div class="rr-detail">
-        Victoria ha confermato: <strong>${victoriaVote.toUpperCase()}</strong><br>
+        Victoria ha confermato: <strong>${victoriaAnswer.toUpperCase()}</strong><br>
         ${majority} vs ${minority} — la minoranza (${minority} persone) beve ${shots} shot.
       </div>
     `;
@@ -351,6 +339,8 @@ function revealVerdict(){
   document.getElementById('roundResult').innerHTML=resultHTML;
   document.getElementById('scoreInfo').textContent=`Shot totali: ${totalShots}`;
 
+  db.ref(`${ROOT}/state`).update({ phase:'revealed', totalShots, lastShots: shots });
+
   const nextBtn=document.getElementById('nextBtn');
   nextBtn.textContent = sentenceIdx>=shuffled.length-1 ? 'Fine del processo ⚖️' : 'Prossima sentenza →';
 }
@@ -358,15 +348,11 @@ function revealVerdict(){
 function nextSentence(){
   sentenceIdx++;
   if(sentenceIdx>=shuffled.length){ endGame(); return; }
-  showVoting();
+  pushRound();
 }
 
 function endGame(){
   document.getElementById('votingScreen').classList.add('hidden');
-  document.getElementById('tallyScreen').classList.add('hidden');
-  document.getElementById('resultScreen').classList.add('hidden');
-
-  // Reuse result screen as final
   document.getElementById('resultScreen').classList.remove('hidden');
   document.getElementById('rSentenceCount').textContent='Fine';
   document.getElementById('rSentence').textContent='"Il processo è terminato."';
@@ -376,7 +362,8 @@ function endGame(){
     <div class="rr-detail">Sono stati distribuiti <strong>${totalShots} shot</strong> in totale durante il processo.<br>La Dottoressa Rozhko è stata giudicata colpevole di tutto.</div>
   `;
   document.getElementById('nextBtn').textContent='↺ Nuovo processo';
-  document.getElementById('nextBtn').onclick=()=>{ sentenceIdx=0; totalShots=0; shuffled=SENTENCES.slice().sort(()=>Math.random()-.5); showVoting(); };
+  document.getElementById('nextBtn').onclick=()=>{ sentenceIdx=0; totalShots=0; shuffled=SENTENCES.slice().sort(()=>Math.random()-.5); pushRound(); };
+  db.ref(`${ROOT}/state`).update({ phase:'ended' });
   launchConfetti(60);
 }
 

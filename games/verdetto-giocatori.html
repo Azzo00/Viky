@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚖️ Verdetto — Vota!</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--dark:#0D0A07;--green:#2D5A3D;--paper:#E8E0CC;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--cream);font-family:'Courier Prime',monospace;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 0%,rgba(201,151,58,.09) 0%,transparent 55%),radial-gradient(ellipse at 20% 100%,rgba(45,90,61,.07) 0%,transparent 55%);}
+
+.game-header{background:rgba(0,0,0,.65);border-bottom:2px solid var(--gold);padding:14px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+.back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.back-btn:hover{background:var(--gold);color:var(--brown);}
+.hcenter{flex:1;text-align:center;}
+.htitle{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--gold);}
+
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px 56px;position:relative;z-index:1;}
+.screen{width:100%;max-width:520px;text-align:center;}
+.hidden{display:none!important;}
+
+.frog{font-size:72px;animation:floatFrog 3s ease-in-out infinite;margin-bottom:20px;}
+@keyframes floatFrog{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.wait-title{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,36px);font-style:italic;color:var(--gold);margin-bottom:10px;}
+.wait-sub{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;}
+
+.sentence-card{background:var(--paper);border:3px solid var(--brown);padding:32px 24px;box-shadow:8px 8px 0 var(--gold);text-align:center;position:relative;margin-bottom:28px;}
+.sentence-card::before{content:'⚖️';position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:26px;background:var(--dark);padding:0 6px;}
+.sentence-text{font-family:'Playfair Display',serif;font-size:clamp(16px,4vw,21px);font-style:italic;color:var(--brown);line-height:1.45;}
+
+.vote-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.vote-btn{font-family:'Playfair Display',serif;font-size:clamp(16px,3vw,22px);font-style:italic;padding:30px 16px;border:2px solid rgba(201,151,58,.3);background:rgba(201,151,58,.06);color:var(--cream);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;text-align:center;}
+.vote-btn span{position:relative;z-index:1;}
+.vote-btn::before{content:'';position:absolute;inset:0;transform:scaleY(0);transform-origin:bottom;transition:transform .25s ease;z-index:0;}
+.vote-btn.vero::before{background:var(--green);}
+.vote-btn.falso::before{background:var(--red);}
+.vote-btn:hover::before,.vote-btn.selected::before{transform:scaleY(1);}
+.vote-btn:hover,.vote-btn.selected{border-color:var(--gold);color:white;}
+.vote-icon{font-size:26px;display:block;margin-bottom:8px;}
+
+.vote-note{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:rgba(201,151,58,.4);text-transform:uppercase;}
+
+.result-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:36px 28px;}
+.result-verdict{font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,32px);font-style:italic;color:var(--gold);margin-bottom:16px;}
+.result-outcome{font-family:'Special Elite',cursive;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:14px;border:1.5px solid rgba(201,151,58,.3);}
+</style>
+</head>
+<body>
+
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div class="hcenter">
+    <div class="htitle">⚖️ Verdetto — Vota!</div>
+  </div>
+  <div style="width:80px"></div>
+</header>
+
+<main class="main">
+
+  <div class="screen" id="waitingScreen">
+    <div class="frog">🐸</div>
+    <div class="wait-title">In attesa del processo</div>
+    <div class="wait-sub">Il conduttore non ha ancora iniziato…</div>
+  </div>
+
+  <div class="screen hidden" id="votingScreen">
+    <div class="sentence-card">
+      <div class="sentence-text" id="pSentence">—</div>
+    </div>
+    <div class="vote-row">
+      <button class="vote-btn vero" id="pVero" onclick="vote('vero')">
+        <span><span class="vote-icon">✅</span>VERO</span>
+      </button>
+      <button class="vote-btn falso" id="pFalso" onclick="vote('falso')">
+        <span><span class="vote-icon">❌</span>FALSO</span>
+      </button>
+    </div>
+    <div class="vote-note">Puoi cambiare voto finché il conduttore non rivela</div>
+  </div>
+
+  <div class="screen hidden" id="revealedScreen">
+    <div class="result-box">
+      <div class="sentence-card" style="box-shadow:none;">
+        <div class="sentence-text" id="rSentence2">—</div>
+      </div>
+      <div class="result-verdict">Victoria ha risposto: <span id="rVictoriaAnswer">—</span></div>
+      <div class="result-outcome" id="rMyOutcome">—</div>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="endedScreen">
+    <div class="frog">🎓</div>
+    <div class="wait-title">Processo concluso</div>
+    <div class="wait-sub">Grazie per aver votato!</div>
+  </div>
+
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD-6qxY--ANgVXhV8_kz1-ZE05uOcOuUv4",
+  authDomain: "verdetto-rana.firebaseapp.com",
+  databaseURL: "https://verdetto-rana-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "verdetto-rana",
+  storageBucket: "verdetto-rana.firebasestorage.app",
+  messagingSenderId: "642373729546",
+  appId: "1:642373729546:web:aff92a32635f77bf6a4ef3"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const ROOT = 'verdetto';
+
+function getPlayerId(){
+  let id = localStorage.getItem('verdettoPlayerId');
+  if(!id){
+    id = 'p' + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('verdettoPlayerId', id);
+  }
+  return id;
+}
+const myId = getPlayerId();
+
+let currentIndex = null;
+let myVote = null;
+
+db.ref(`${ROOT}/state`).on('value', snap => render(snap.val()));
+
+function render(state){
+  if(!state || !state.phase || state.phase==='idle'){ showScreen('waiting'); return; }
+  if(state.phase==='ended'){ showScreen('ended'); return; }
+
+  if(state.index !== currentIndex){
+    currentIndex = state.index;
+    myVote = null;
+  }
+
+  if(state.phase==='voting'){
+    showScreen('voting');
+    document.getElementById('pSentence').textContent = `"${state.sentence}"`;
+    highlightVote();
+  } else if(state.phase==='revealed'){
+    showScreen('revealed');
+    renderResult(state);
+  }
+}
+
+function showScreen(name){
+  ['waiting','voting','revealed','ended'].forEach(s=>{
+    document.getElementById(s+'Screen').classList.toggle('hidden', s!==name);
+  });
+}
+
+function vote(choice){
+  myVote = choice;
+  db.ref(`${ROOT}/votes/${myId}`).set(choice);
+  highlightVote();
+}
+
+function highlightVote(){
+  document.getElementById('pVero').classList.toggle('selected', myVote==='vero');
+  document.getElementById('pFalso').classList.toggle('selected', myVote==='falso');
+}
+
+function renderResult(state){
+  document.getElementById('rSentence2').textContent = `"${state.sentence}"`;
+  const va = state.victoriaAnswer;
+  document.getElementById('rVictoriaAnswer').textContent = va ? va.toUpperCase() : '—';
+
+  const outcomeEl = document.getElementById('rMyOutcome');
+  if(!myVote){
+    outcomeEl.textContent = 'Non hai votato questo turno';
+  } else if(myVote===va){
+    outcomeEl.textContent = '✅ Hai indovinato!';
+  } else {
+    outcomeEl.textContent = '🥂 Hai sbagliato, bevi!';
+  }
+}
+</script>
+</body>
+</html>
