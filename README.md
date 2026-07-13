@@ -12,7 +12,6 @@ rana-laurea/
     ├── grafici.html    ← 📊 Grafici Assurdi
     ├── copertina.html  ← 📰 Copertina Vintage
     ├── paese.html      ← 🌍 Marketing Internazionale (quiz)
-    ├── oracolo.html    ← 🔮 Oracolo del Mercato
     ├── asta.html       ← 🏦 Asta Alcolica
     └── roulette.html   ← 🎲 Roulette degli Shot
 ```
