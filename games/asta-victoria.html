@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐸 Asta Alcolica — Victoria</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--dark:#1A1410;--green:#2D5A3D;--paper:#E8E0CC;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--cream);font-family:'Courier Prime',monospace;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 20% 20%,rgba(201,151,58,.06) 0%,transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(45,90,61,.05) 0%,transparent 55%);}
+
+.game-header{background:rgba(0,0,0,.4);border-bottom:3px double var(--gold);padding:16px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(6px);}
+.back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.back-btn:hover{background:var(--gold);color:var(--brown);}
+.header-center{flex:1;text-align:center;}
+.game-header-title{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--gold);}
+
+.main-body{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px 56px;position:relative;z-index:1;}
+.screen{width:100%;max-width:520px;text-align:center;}
+.hidden{display:none!important;}
+
+.frog{font-size:64px;animation:floatFrog 3s ease-in-out infinite;margin-bottom:18px;}
+@keyframes floatFrog{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.wait-title{font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,32px);font-style:italic;color:var(--gold);margin-bottom:10px;}
+.wait-sub{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;}
+
+.lot-card{background:var(--paper);border:3px solid var(--brown);padding:28px 22px;box-shadow:8px 8px 0 var(--gold);text-align:center;margin-bottom:24px;}
+.lot-name{font-family:'Playfair Display',serif;font-size:clamp(18px,4vw,24px);color:var(--brown);font-style:italic;margin-bottom:10px;}
+.lot-desc{font-size:13px;color:var(--brown);opacity:.78;line-height:1.6;}
+
+.judge-row{background:rgba(0,0,0,.35);border:2px solid rgba(201,151,58,.25);padding:20px;margin-bottom:14px;text-align:left;}
+.judge-name{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-light);font-style:italic;margin-bottom:4px;}
+.judge-bid{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:1px;color:rgba(201,151,58,.5);text-transform:uppercase;margin-bottom:14px;}
+.judge-btns{display:flex;gap:10px;}
+.judge-btn{flex:1;font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;padding:12px;border:1.5px solid;cursor:pointer;text-transform:uppercase;background:transparent;transition:all .2s;}
+.judge-btn.pass{border-color:var(--green);color:var(--green);}
+.judge-btn.pass:hover,.judge-btn.pass.selected{background:var(--green);color:white;}
+.judge-btn.fail{border-color:var(--red);color:var(--red);}
+.judge-btn.fail:hover,.judge-btn.fail.selected{background:var(--red);color:white;}
+</style>
+</head>
+<body>
+
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div class="header-center"><div class="game-header-title">🐸 Asta — Victoria</div></div>
+  <div style="width:80px"></div>
+</header>
+
+<main class="main-body">
+
+  <!-- WAITING -->
+  <div class="screen" id="waitingScreen">
+    <div class="frog">🐸</div>
+    <div class="wait-title">In attesa dell'asta</div>
+    <div class="wait-sub">Il conduttore non ha ancora rivelato chi ha puntato meno…</div>
+  </div>
+
+  <!-- JUDGING -->
+  <div class="screen hidden" id="judgingScreen">
+    <div class="lot-card">
+      <div class="lot-name" id="lotName">—</div>
+      <div class="lot-desc" id="lotDesc">—</div>
+    </div>
+    <div id="judgeList"></div>
+  </div>
+
+  <!-- ENDED -->
+  <div class="screen hidden" id="endedScreen">
+    <div class="frog">🎓</div>
+    <div class="wait-title">Asta conclusa</div>
+    <div class="wait-sub">Sei sopravvissuta a tutte le prove.</div>
+  </div>
+
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD-6qxY--ANgVXhV8_kz1-ZE05uOcOuUv4",
+  authDomain: "verdetto-rana.firebaseapp.com",
+  databaseURL: "https://verdetto-rana-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "verdetto-rana",
+  storageBucket: "verdetto-rana.firebasestorage.app",
+  messagingSenderId: "642373729546",
+  appId: "1:642373729546:web:aff92a32635f77bf6a4ef3"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const ROOT = 'asta';
+
+let currentLotIndex = null;
+let currentVerdicts = {};
+
+db.ref(`${ROOT}/state`).on('value', snap => render(snap.val()));
+db.ref(`${ROOT}/verdicts`).on('value', snap => { currentVerdicts = snap.val() || {}; highlightSelections(); });
+
+function render(state){
+  if(!state || !state.phase || state.phase === 'idle' || state.phase === 'bidding'){
+    showScreen('waiting');
+    return;
+  }
+  if(state.phase === 'ended'){ showScreen('ended'); return; }
+
+  if(state.phase === 'revealed'){
+    currentLotIndex = state.lotIndex;
+    showScreen('judging');
+    document.getElementById('lotName').textContent = state.lotName;
+    document.getElementById('lotDesc').textContent = state.lotDesc;
+    renderJudgeList(state.lowestBidders || []);
+  }
+}
+
+function showScreen(name){
+  ['waiting','judging','ended'].forEach(s => {
+    document.getElementById(s+'Screen').classList.toggle('hidden', s !== name);
+  });
+}
+
+function renderJudgeList(lowestBidders){
+  const el = document.getElementById('judgeList');
+  el.innerHTML = lowestBidders.map(l => `
+    <div class="judge-row">
+      <div class="judge-name">${l.name}</div>
+      <div class="judge-bid">Ha puntato 🪙 ${l.bid}</div>
+      <div class="judge-btns">
+        <button class="judge-btn pass" id="pass-${l.id}" onclick="judge('${l.id}','pass')">✅ Supera la prova</button>
+        <button class="judge-btn fail" id="fail-${l.id}" onclick="judge('${l.id}','fail')">🥂 Beve</button>
+      </div>
+    </div>
+  `).join('');
+  highlightSelections();
+}
+
+function judge(id, verdict){
+  db.ref(`${ROOT}/verdicts/${id}`).set(verdict);
+}
+
+function highlightSelections(){
+  Object.keys(currentVerdicts).forEach(id => {
+    const passBtn = document.getElementById(`pass-${id}`);
+    const failBtn = document.getElementById(`fail-${id}`);
+    if(passBtn) passBtn.classList.toggle('selected', currentVerdicts[id] === 'pass');
+    if(failBtn) failBtn.classList.toggle('selected', currentVerdicts[id] === 'fail');
+  });
+}
+</script>
+</body>
+</html>

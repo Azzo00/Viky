@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏦 Asta Alcolica — Punta!</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--brown:#3D2B1F;--gold:#C9973A;--gold-light:#E8C97A;--red:#8B2020;--dark:#1A1410;--green:#2D5A3D;--paper:#E8E0CC;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--cream);font-family:'Courier Prime',monospace;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 20% 20%,rgba(201,151,58,.06) 0%,transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(45,90,61,.05) 0%,transparent 55%);}
+
+.game-header{background:rgba(0,0,0,.4);border-bottom:3px double var(--gold);padding:16px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(6px);}
+.back-btn{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;padding:7px 16px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;text-decoration:none;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.back-btn:hover{background:var(--gold);color:var(--brown);}
+.header-center{flex:1;text-align:center;}
+.game-header-title{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--gold);}
+
+.main-body{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px 56px;position:relative;z-index:1;}
+.screen{width:100%;max-width:480px;text-align:center;}
+.hidden{display:none!important;}
+
+.frog{font-size:64px;animation:floatFrog 3s ease-in-out infinite;margin-bottom:18px;}
+@keyframes floatFrog{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.wait-title{font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,32px);font-style:italic;color:var(--gold);margin-bottom:10px;}
+.wait-sub{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:3px;color:rgba(201,151,58,.45);text-transform:uppercase;}
+
+/* Name gate */
+.name-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:36px 28px;text-align:center;}
+.name-title{font-family:'Playfair Display',serif;font-size:24px;font-style:italic;color:var(--gold);margin-bottom:18px;}
+.name-input{width:100%;font-family:'Courier Prime',monospace;font-size:15px;padding:13px 16px;border:1.5px solid rgba(201,151,58,.4);background:rgba(201,151,58,.06);color:var(--cream);margin-bottom:16px;text-align:center;}
+.name-input:focus{outline:none;border-color:var(--gold);}
+.name-btn{font-family:'Special Elite',cursive;font-size:13px;letter-spacing:3px;padding:13px 32px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;}
+
+/* Token badge */
+.token-badge{display:inline-block;background:rgba(0,0,0,.4);border:2px solid var(--gold);padding:10px 24px;margin-bottom:24px;}
+.token-lbl{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:rgba(201,151,58,.6);text-transform:uppercase;display:block;}
+.token-val{font-family:'Playfair Display',serif;font-size:30px;color:var(--gold);font-weight:700;}
+
+.lot-card{background:var(--paper);border:3px solid var(--brown);padding:28px 22px;box-shadow:8px 8px 0 var(--gold);text-align:center;margin-bottom:22px;}
+.lot-name{font-family:'Playfair Display',serif;font-size:clamp(18px,4vw,24px);color:var(--brown);font-style:italic;margin-bottom:10px;}
+.lot-desc{font-size:13px;color:var(--brown);opacity:.78;line-height:1.6;}
+
+.bid-box{background:rgba(0,0,0,.35);border:2px solid rgba(201,151,58,.25);padding:24px;}
+.bid-lbl{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:rgba(201,151,58,.5);text-transform:uppercase;margin-bottom:14px;display:block;}
+.bid-input-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:14px;}
+.bid-input{width:100px;font-family:'Playfair Display',serif;font-size:28px;text-align:center;padding:10px;border:2px solid var(--gold);background:rgba(201,151,58,.08);color:var(--gold);}
+.bid-input:focus{outline:none;}
+.bid-btn{font-family:'Special Elite',cursive;font-size:13px;letter-spacing:2px;padding:13px 28px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;text-transform:uppercase;font-weight:700;}
+.bid-note{font-family:'Special Elite',cursive;font-size:10px;letter-spacing:1px;color:rgba(201,151,58,.4);text-transform:uppercase;}
+.bid-confirmed{font-family:'Special Elite',cursive;font-size:12px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-top:10px;}
+
+.result-box{background:rgba(201,151,58,.04);border:2px solid rgba(201,151,58,.22);padding:32px 24px;}
+.result-title{font-family:'Playfair Display',serif;font-size:clamp(20px,5vw,28px);font-style:italic;margin-bottom:14px;}
+.result-title.safe{color:var(--green);}
+.result-title.atrisk{color:var(--red);}
+.result-detail{font-size:13px;color:rgba(232,224,204,.7);line-height:1.7;}
+.result-verdict{font-family:'Special Elite',cursive;font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-top:16px;padding:12px;border:1.5px solid rgba(201,151,58,.3);}
+</style>
+</head>
+<body>
+
+<header class="game-header">
+  <a class="back-btn" href="../index.html">← Torna</a>
+  <div class="header-center"><div class="game-header-title">🏦 Asta Alcolica</div></div>
+  <div style="width:80px"></div>
+</header>
+
+<main class="main-body">
+
+  <!-- NAME GATE -->
+  <div class="screen" id="nameScreen">
+    <div class="name-box">
+      <div class="name-title">🐸 Come ti chiami?</div>
+      <input class="name-input" type="text" id="nameInput" placeholder="Il tuo nome" maxlength="24">
+      <button class="name-btn" onclick="registerName()">Entra nell'asta →</button>
+    </div>
+  </div>
+
+  <!-- WAITING -->
+  <div class="screen hidden" id="waitingScreen">
+    <div class="frog">🐸</div>
+    <div class="wait-title">In attesa dell'asta</div>
+    <div class="wait-sub">Il conduttore non ha ancora iniziato…</div>
+  </div>
+
+  <!-- BIDDING -->
+  <div class="screen hidden" id="biddingScreen">
+    <div class="token-badge">
+      <span class="token-lbl">I tuoi token</span>
+      <span class="token-val" id="myTokens">0</span>
+    </div>
+    <div class="lot-card">
+      <div class="lot-name" id="lotName">—</div>
+      <div class="lot-desc" id="lotDesc">—</div>
+    </div>
+    <div class="bid-box">
+      <span class="bid-lbl">Quanto punti?</span>
+      <div class="bid-input-row">
+        <input class="bid-input" type="number" id="bidInput" min="0" value="0">
+        <button class="bid-btn" onclick="submitBid()">Punta 🪙</button>
+      </div>
+      <div class="bid-note">Puoi cambiare puntata finché il conduttore non rivela</div>
+      <div class="bid-confirmed hidden" id="bidConfirmed"></div>
+    </div>
+  </div>
+
+  <!-- REVEALED -->
+  <div class="screen hidden" id="revealedScreen">
+    <div class="result-box">
+      <div class="lot-card" style="box-shadow:none;">
+        <div class="lot-name" id="rLotName">—</div>
+      </div>
+      <div id="resultContent"></div>
+    </div>
+  </div>
+
+  <!-- ENDED -->
+  <div class="screen hidden" id="endedScreen">
+    <div class="frog">🎓</div>
+    <div class="wait-title">Asta conclusa</div>
+    <div class="wait-sub">Token rimasti: <span id="finalTokens">0</span></div>
+  </div>
+
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD-6qxY--ANgVXhV8_kz1-ZE05uOcOuUv4",
+  authDomain: "verdetto-rana.firebaseapp.com",
+  databaseURL: "https://verdetto-rana-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "verdetto-rana",
+  storageBucket: "verdetto-rana.firebasestorage.app",
+  messagingSenderId: "642373729546",
+  appId: "1:642373729546:web:aff92a32635f77bf6a4ef3"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const ROOT = 'asta';
+
+function getPlayerId(){
+  let id = localStorage.getItem('astaPlayerId');
+  if(!id){
+    id = 'p' + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('astaPlayerId', id);
+  }
+  return id;
+}
+const myId = getPlayerId();
+
+let myTokens = 0;
+let currentPhase = null;
+let currentLotIndex = null;
+let bidValue = 0;
+
+/* ── NAME REGISTRATION ── */
+const savedName = localStorage.getItem('astaPlayerName');
+if(savedName){
+  ensureRegistered(savedName);
+} else {
+  document.getElementById('nameScreen').classList.remove('hidden');
+}
+
+function registerName(){
+  const name = document.getElementById('nameInput').value.trim();
+  if(!name){ return; }
+  localStorage.setItem('astaPlayerName', name);
+  ensureRegistered(name);
+}
+
+function ensureRegistered(name){
+  document.getElementById('nameScreen').classList.add('hidden');
+  db.ref(`${ROOT}/players/${myId}`).once('value').then(snap => {
+    if(snap.exists()){ return; }
+    db.ref(`${ROOT}/config/tokenStart`).once('value').then(cfgSnap => {
+      const tokenStart = cfgSnap.val() || 50;
+      db.ref(`${ROOT}/players/${myId}`).set({ name, tokens: tokenStart });
+    });
+  });
+  startListening();
+}
+
+/* ── REALTIME LISTENERS ── */
+function startListening(){
+  db.ref(`${ROOT}/players/${myId}`).on('value', snap => {
+    const p = snap.val();
+    if(p){ myTokens = p.tokens; document.getElementById('myTokens').textContent = myTokens; }
+  });
+  db.ref(`${ROOT}/state`).on('value', snap => render(snap.val()));
+}
+
+function render(state){
+  if(!state || !state.phase || state.phase === 'idle'){ showScreen('waiting'); return; }
+  if(state.phase === 'ended'){
+    document.getElementById('finalTokens').textContent = myTokens;
+    showScreen('ended');
+    return;
+  }
+
+  if(state.lotIndex !== currentLotIndex){
+    currentLotIndex = state.lotIndex;
+    bidValue = 0;
+    document.getElementById('bidInput').value = 0;
+    document.getElementById('bidConfirmed').classList.add('hidden');
+  }
+  currentPhase = state.phase;
+
+  if(state.phase === 'bidding'){
+    showScreen('bidding');
+    document.getElementById('lotName').textContent = state.lotName;
+    document.getElementById('lotDesc').textContent = state.lotDesc;
+    document.getElementById('bidInput').max = myTokens;
+  } else if(state.phase === 'revealed'){
+    showScreen('revealed');
+    renderResult(state);
+  }
+}
+
+function showScreen(name){
+  ['waiting','bidding','revealed','ended'].forEach(s => {
+    document.getElementById(s+'Screen').classList.toggle('hidden', s !== name);
+  });
+}
+
+function submitBid(){
+  let val = parseInt(document.getElementById('bidInput').value) || 0;
+  val = Math.max(0, Math.min(val, myTokens));
+  document.getElementById('bidInput').value = val;
+  db.ref(`${ROOT}/bids/${myId}`).set(val);
+  const c = document.getElementById('bidConfirmed');
+  c.textContent = `✓ Hai puntato ${val}`;
+  c.classList.remove('hidden');
+}
+
+function renderResult(state){
+  document.getElementById('rLotName').textContent = state.lotName;
+  const iLost = (state.lowestBidders || []).some(l => l.id === myId);
+  const content = document.getElementById('resultContent');
+
+  if(iLost){
+    const mine = state.lowestBidders.find(l => l.id === myId);
+    const verdict = (state.verdicts || {})[myId];
+    let verdictHTML = '<div class="result-verdict" style="color:rgba(201,151,58,.5);">⏳ Victoria sta decidendo…</div>';
+    if(verdict === 'pass') verdictHTML = '<div class="result-verdict" style="color:var(--green);border-color:var(--green);">✅ Hai superato la prova!</div>';
+    if(verdict === 'fail') verdictHTML = '<div class="result-verdict" style="color:var(--red);border-color:var(--red);">🥂 Hai fallito, bevi!</div>';
+    content.innerHTML = `
+      <div class="result-title atrisk">Hai puntato meno di tutti!</div>
+      <div class="result-detail">Hai puntato solo 🪙 ${mine.bid} — tocca a te affrontare la prova.</div>
+      ${verdictHTML}
+    `;
+  } else {
+    const names = (state.lowestBidders || []).map(l => l.name).join(', ');
+    content.innerHTML = `
+      <div class="result-title safe">Sei salvo questo turno</div>
+      <div class="result-detail">Il rischio è andato a: <strong>${names}</strong> (puntata più bassa: 🪙 ${state.lowestAmount}).</div>
+    `;
+  }
+}
+</script>
+</body>
+</html>
